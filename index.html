@@ -8,32 +8,42 @@
     <title>Cassino</title>
 
     <script>
-        dir = "./img/";
+        dir = "./img2/";
 
         dinheiro = 0;
-        aposta = 1;
         premio = 0;
-        bonus = "";
-        maior = 0;
-        totalLinhas = 1;
+        bonus = 0;
+        qtdeLinhas = 1;
+        premioPago = 0;
+        apostas = 0;
+        contador = 1;
+        qtdeLinhas = 1;
+        premioBonus = 0;
+        var a;
+        var t;
 
-        imagens = ['tigre', 'cao', 'gato', 'lebre', 'cobra', 'galo', 'pavao', 'aguia', 'zebra','cavalo'];
+        imagens = ['lebre', 'gato', 'cao', 'pavao', 'zebra', 'tigre', 'galo', 'cavalo', 'cobra', 'aguia',
+            'lebre', 'gato', 'cao', 'lebre', 'gato', 'cao', 'lebre', 'cao', 'pavao', 'zebra', 'lebre', 'lebre',
+            'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo',
+            'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo', 'galo'];
 
         elemento = ['img_1', 'img_2', 'img_3', 'img_4', 'img_5', 'img_6', 'img_7', 'img_8',
             'img_9', 'img_10', 'img_11', 'img_12', 'img_13', 'img_14', 'img_15'];
 
         saida = [];
 
-        posicaoImagens = 0;
-        posicaoElemento = 0;
+        var audio = new Audio('roleta.wav');
 
-        var a;
-        var t;
+        function setCurrentTime(params) {
+            audio.currentTime = params;
+        }
+
         function jogar(auto) {
             btnAutoText = document.getElementById('btnAutoText').innerHTML;
             if (btnAutoText == 'AUTO ON') {
-                auto = 'false'
+                auto = 'false';
             }
+
             if (auto == 'false') {
                 document.getElementById('btnAutoText').innerHTML = 'AUTO OFF';
                 if (a != null) {
@@ -42,8 +52,10 @@
                 }
 
                 rodar();
+
             } else if (auto == 'true') {
                 rodar();
+
                 document.getElementById('btnAutoText').innerHTML = 'AUTO ON';
                 a = setInterval(rodar, 5000);
             }
@@ -51,18 +63,39 @@
         }
 
         function rodar() {
-            if (dinheiro > 0 && dinheiro >= totalLinhas) {
-                desabilitaBotoes();
-                cont = 0;
-
-                processarDinheiro();
-                setTimeout(t = setInterval(randomImagens, 1), 2000);
-                parar();
-
-            } else {
-                document.getElementById('btnAutoText').innerHTML = 'AUTO OFF';
+            if (bonus > 0) {
                 clearInterval(a);
                 clearInterval(t);
+                mostrarJogo_2(true);
+
+            } else {
+                if (premio != 0) {
+                    dinheiro += premio;
+                    premioPago += premio;
+                    premio = 0;
+
+                    document.getElementById('premio').innerHTML = premio;
+                    document.getElementById('dinheiro').innerHTML = dinheiro;
+                }
+
+                if (dinheiro > 0 && dinheiro >= apostas) {
+                    document.getElementById('grupos').style.filter = "blur(5px)";
+                    desabilitaBotoes(null);
+                    cont = 0;
+                    audio.fadeOut = true;
+                    audio.play();
+                    audio.volume = 0.1;
+                    setCurrentTime(5);
+
+                    processarDinheiro();
+                    setTimeout(t = setInterval(randomImagens, 1), 1000);
+                    parar();
+
+                } else {
+                    document.getElementById('btnAutoText').innerHTML = 'AUTO OFF';
+                    clearInterval(a);
+                    clearInterval(t);
+                }
             }
         }
 
@@ -77,24 +110,26 @@
             setTimeout(() => {
                 clearInterval(t);
                 pegarImagem();
+                document.getElementById('grupos').style.filter = "blur(0px)";
                 habilitaBotoes();
-
             }, 3000);
         }
 
         function setLinhas() {
-            if (totalLinhas < 9) {
-                totalLinhas += 4;
+            if (qtdeLinhas < 9) {
+                qtdeLinhas += 4;
 
-            } else if (totalLinhas >= 9 && totalLinhas < 15) {
-                totalLinhas += 6;
-            } else if (totalLinhas == 15) {
-                totalLinhas += 10;
+            } else if (qtdeLinhas >= 9 && qtdeLinhas < 15) {
+                qtdeLinhas += 6;
+            } else if (qtdeLinhas == 15) {
+                qtdeLinhas += 10;
             } else {
-                totalLinhas = 1;
+                qtdeLinhas = 1;
             }
-            document.getElementById('btnLinhas').innerHTML = "LINHAS " + totalLinhas;
-            document.getElementById('apostas').innerHTML = totalLinhas;
+            apostas = qtdeLinhas * contador;
+
+            document.getElementById('btnLinhas').innerHTML = "LINHAS " + qtdeLinhas;
+            document.getElementById('apostas').innerHTML = apostas;
         }
 
         function pegarImagem() {
@@ -102,57 +137,60 @@
                 v = Math.floor(Math.random() * imagens.length);
                 var img = document.getElementById(elemento[index]);
                 img.src = dir + imagens[v] + '.png';
-
                 saida[index] = imagens[v];
             }
+
             calcularPremio();
         }
 
         function processarDinheiro() {
-            dinheiro -= totalLinhas;
+            dinheiro -= apostas;
 
-            document.getElementById('dinheiro').innerHTML = dinheiro.toFixed(2).replace(".", ",");
-        }
-
-        function setAposta(valor) {
-            if (valor > 0) {
-                aposta = valor;
-
-            } else {
-                if (aposta < 4) {
-                    aposta++;
-
-                } else {
-                    aposta = 1;
-                }
-            }
-            document.getElementById('btnLinhas').innerHTML = "LINHAS " + aposta;
-            document.getElementById('apostas').innerHTML = aposta;
+            document.getElementById('dinheiro').innerHTML = dinheiro;
         }
 
         function almentarAposta() {
-            valorAposta++;
+            if (contador < 40) {
+                contador++;
 
+            } else {
+                contador = 1;
+            }
+            apostas = contador * qtdeLinhas;
+            document.getElementById('contador').innerHTML = contador;
+            document.getElementById('apostas').innerHTML = apostas;
         }
 
         function depositar() {
-            dinheiro += 10;
-            aposta = 1;
-
-            document.getElementById('btnLinhas').innerHTML = "LINHA " + aposta;
-            document.getElementById('apostas').innerHTML = aposta;
-            document.getElementById('dinheiro').innerHTML = dinheiro.toFixed(2).replace(".", ",");
+            dinheiro += 1000;
+            qtdeLinhas = 1;
+            contador = 1;
+            document.getElementById('btnLinhas').innerHTML = "LINHA " + qtdeLinhas;
+            document.getElementById('apostas').innerHTML = qtdeLinhas;
+            document.getElementById('contador').innerHTML = contador;
+            document.getElementById('dinheiro').innerHTML = dinheiro;
         }
 
-        function desabilitaBotoes() {
+        function desabilitaBotoes(botao) {
             botaoJogar = document.getElementById('btnJogar').value;
 
+
             if (botaoJogar) {
-                document.getElementById('btnJogar').disabled = true;
+                botaoJogar.disabled = true;
                 document.getElementById('btnDepositar').disabled = true;
                 document.getElementById('btnAposta').disabled = true;
                 document.getElementById('btnAutomatico').disabled = true;
                 document.getElementById('btnLinhas').disabled = true;
+            }
+
+            if (botao != null) {
+                botaoJogo_2 = document.getElementById(botao).value;
+                document.getElementById('btnJogo_1').disabled = true;
+                document.getElementById('btnJogo_2').disabled = true;
+                document.getElementById('btnJogo_3').disabled = true;
+                document.getElementById('btnJogo_4').disabled = true;
+                document.getElementById('btnJogo_5').disabled = true;
+
             }
         }
 
@@ -162,12 +200,17 @@
             document.getElementById('btnAposta').disabled = false;
             document.getElementById('btnAutomatico').disabled = false;
             document.getElementById('btnLinhas').disabled = false;
+
+            document.getElementById('btnJogo_1').disabled = false;
+            document.getElementById('btnJogo_2').disabled = false;
+            document.getElementById('btnJogo_3').disabled = false;
+            document.getElementById('btnJogo_4').disabled = false;
+            document.getElementById('btnJogo_5').disabled = false;
+
         }
 
         function calcularPremio() {
-            console.clear();
-
-            switch (totalLinhas) {
+            switch (qtdeLinhas) {
                 case 1:
                     linha_1();
                     break;
@@ -185,596 +228,426 @@
             }
 
             function linha_1() {
-                //lebre
+                //depois renomear para linha_2
                 okLebre = 0;
+                okGato = 0;
+                okCao = 0;
+                okPavao = 0;
+                okZebra = 0;
+                okTigre = 0;
+                okGalo = 0;
+                okCavalo = 0;
+                okCobra = 0;
+                okAguia = 0;
+
                 for (let index = 0; index < 5; index++) {
                     if (saida[index] == "lebre") {
                         okLebre++;
                     }
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                    if (saida[index] == "tigre") {
+                        okTigre++;
+                    }
+                    if (saida[index] == "galo") {
+                        okGalo++;
+                    }
+                    if (saida[index] == "cavalo") {
+                        okCavalo++;
+                    }
+                    if (saida[index] == "cobra") {
+                        okCobra++;
+                    }
+                    if (saida[index] == "aguia") {
+                        okAguia++;
+                    }
+
                 }
 
                 if (okLebre == 5) {
                     premio += 30;
-                    okLebre = 0;
 
                 } else if (okLebre == 4) {
                     premio += 2;
-                    okLebre = 0;
 
                 }
-
-                //gato
-                okGato = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "gato") {
-                        okGato++;
-                    }
-                }
+                okLebre = 0;
 
                 if (okGato == 5) {
                     premio += 30;
-                    okGato = 0;
 
                 } else if (okGato == 4) {
                     premio += 7;
-                    okGato = 0;
 
                 }
-
-                if (saida[0] == "gato" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 5;
-
-                } else if (saida[2] == "gato" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 5;
-
-                } else if (saida[1] == "gato" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 2;
-
-                }
-
-                //pavao
-                okPavao = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "pavao") {
-                        okPavao++;
-                    }
-                }
-
-                if (okPavao == 5) {
-                    premio += 75;
-                    okPavao = 0;
-
-                } else if (okPavao == 4) {
-                    premio += 30;
-                    okPavao = 0;
-
-                }
-
-                if (saida[0] == "pavao" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 5;
-
-                } else if (saida[2] == "pavao" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 5;
-
-                } else if (saida[1] == "pavao" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 2;
-
-                }
-
-                //cao
-                okCao = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "cao") {
-                        okCao++;
-                    }
-                }
+                okGato = 0;
 
                 if (okCao == 5) {
-                    premio += 150;
-                    okCao = 0;
+                    premio += 75;
 
                 } else if (okCao == 4) {
+                    premio += 30;
+
+                }
+                okCao = 0;
+
+                if (okPavao == 5) {
+                    premio += 150;
+
+                } else if (okPavao == 4) {
                     premio += 100;
-                    okCao = 0;
 
                 }
-
-                if (saida[0] == "cao" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 7;
-
-                } else if (saida[2] == "cao" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 7;
-
-                } else if (saida[1] == "cao" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 7;
-
-                }
-
-                //zebra
-                okZebra = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "zebra") {
-                        okZebra++;
-                    }
-                }
+                okPavao = 0;
 
                 if (okZebra == 5) {
                     premio += 200;
-                    okZebra = 0;
 
                 } else if (okZebra == 4) {
                     premio += 50;
-                    okZebra = 0;
-
-                } else if (okZebra == 3) {
-                    premio += 10;
-                    okZebra = 0;
 
                 }
+                okZebra = 0;
 
-                //galo
-                okCarroca = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "galo") {
-                        okCarroca++;
-                    }
-                }
-
-                if (okCarroca == 5) {
-                    bonus = 3;
-                    okCarroca = 0;
-
-                } else {
-                    if (saida[0] == "galo" && saida[0] == saida[1] && saida[0] == saida[2] && saida[0] == saida[3]) {
-                        bonus = 2;
-
-                    } else if (saida[1] == "galo" && saida[1] == saida[2] && saida[1] == saida[3] && saida[1] == saida[4]) {
-                        bonus = 2;
-
-                    } else if (saida[0] == "galo" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                        bonus = 1;
-
-                    } else if (saida[2] == "galo" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                        bonus = 1;
-
-                    }
-                }
-                //leao
-                okCeleiro = 0;
-                for (let index = 0; index < 5; index++) {
-                    if (saida[index] == "leao") {
-                        okCeleiro++;
-                    }
-                }
-
-                if (okCeleiro == 5) {
+                if (okTigre == 5) {
                     premio += 2000;
-                    okCeleiro = 0;
 
-                } else {
-                    okCeleiro = 0;
-                    for (let index = 0; index < 4; index++) {
-                        if (saida[index] == "leao") {
-                            okCeleiro++;
-                        }
-
-                    }
-
-                    if (okCeleiro == 4) {
-                        bonus = 2;
-                        okCeleiro = 0;
-
-                    } else {
-                        if (saida[0] == "leao" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                            bonus = 1;
-
-                        } else if (saida[2] == "leao" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                            bonus = 1;
-
-                        } else if (saida[1] == "leao" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                            bonus = 1;
-
-                        }
-                    }
+                } else if (okTigre == 4) {
+                    premio += 500;
 
                 }
+                okTigre = 0;
 
+                if (okGalo == 5) {
+                    bonus += 3;
+
+                } else if (okGalo == 4) {
+                    bonus += 2;
+
+                }
+                okGalo = 0;
+
+                if (okCavalo == 5) {
+                    premio += 2000;
+
+                } else if (okCavalo == 4) {
+                    bonus += 2;
+
+                }
+                okCavalo = 0;
+
+                if (okCobra == 5) {
+                    premio += 2000;
+
+                } else if (okCobra == 4) {
+                    premio += 1000;
+
+                }
+                okCobra = 0;
+
+                if (okAguia == 5) {
+                    premio += 10000;
+
+                } else if (okAguia == 4) {
+                    premio += 2000;
+
+                }
+                okAguia = 0;
             }
             function linha_2() {
-                //lebre
                 okLebre = 0;
+                okGato = 0;
+                okCao = 0;
+                okPavao = 0;
+                okZebra = 0;
+                okTigre = 0;
+                okGalo = 0;
+                okCavalo = 0;
+                okCobra = 0;
+                okAguia = 0;
+
                 for (let index = 5; index < 10; index++) {
                     if (saida[index] == "lebre") {
                         okLebre++;
                     }
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                    if (saida[index] == "tigre") {
+                        okTigre++;
+                    }
+                    if (saida[index] == "galo") {
+                        okGalo++;
+                    }
+                    if (saida[index] == "cavalo") {
+                        okCavalo++;
+                    }
+                    if (saida[index] == "cobra") {
+                        okCobra++;
+                    }
+                    if (saida[index] == "aguia") {
+                        okAguia++;
+                    }
+
                 }
 
                 if (okLebre == 5) {
                     premio += 30;
-                    okLebre = 0;
 
                 } else if (okLebre == 4) {
                     premio += 2;
-                    okLebre = 0;
 
                 }
-
-                //gato
-                okGato = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "gato") {
-                        okGato++;
-                    }
-                }
-
+                okLebre = 0;
                 if (okGato == 5) {
                     premio += 30;
-                    okGato = 0;
 
                 } else if (okGato == 4) {
                     premio += 7;
-                    okGato = 0;
 
                 }
-                if (saida[5] == "gato" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 5;
-
-                } else if (saida[7] == "gato" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 5;
-
-                } else if (saida[6] == "gato" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 2;
-
-                }
-
-                //pavao
-                okPavao = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "pavao") {
-                        okPavao++;
-                    }
-                }
-
-                if (okPavao == 5) {
-                    premio += 75;
-                    okPavao = 0;
-
-                } else if (okPavao == 4) {
-                    premio += 30;
-                    okPavao = 0;
-
-                }
-                if (saida[5] == "pavao" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 5;
-
-                } else if (saida[7] == "pavao" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 5;
-
-                } else if (saida[6] == "pavao" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 2;
-
-                }
-
-                //cao
-                okCao = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "cao") {
-                        okCao++;
-                    }
-                }
+                okGato = 0;
 
                 if (okCao == 5) {
-                    premio += 150;
-                    okCao = 0;
+                    premio += 75;
 
                 } else if (okCao == 4) {
+                    premio += 30;
+
+                }
+                okCao = 0;
+
+                if (okPavao == 5) {
+                    premio += 150;
+
+                } else if (okPavao == 4) {
                     premio += 100;
-                    okCao = 0;
 
                 }
-                if (saida[5] == "cao" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 7;
-
-                } else if (saida[7] == "cao" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 7;
-
-                } else if (saida[6] == "cao" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 7;
-
-                }
-
-                //zebra
-                okZebra = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "zebra") {
-                        okZebra++;
-                    }
-                }
+                okPavao = 0;
 
                 if (okZebra == 5) {
                     premio += 200;
-                    okZebra = 0;
 
                 } else if (okZebra == 4) {
                     premio += 50;
-                    okZebra = 0;
-
-                } else if (okZebra == 3) {
-                    premio += 10;
-                    okZebra = 0;
 
                 }
+                okZebra = 0;
 
-                //galo
-                okCarroca = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "galo") {
-                        okCarroca++;
-                    }
-                }
-
-                if (okCarroca == 5) {
-                    bonus = 3;
-                    okCarroca = 0;
-
-                } else {
-                    if (saida[5] == "galo" && saida[5] == saida[6] && saida[5] == saida[7] && saida[5] == saida[8]) {
-                        bonus = 2;
-
-                    } else if (saida[6] == "galo" && saida[6] == saida[7] && saida[6] == saida[8] && saida[6] == saida[9]) {
-                        bonus = 2;
-
-                    } else if (saida[5] == "galo" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                        bonus = 1;
-
-                    } else if (saida[7] == "galo" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                        bonus = 1;
-
-                    }
-                }
-                //leao
-                okCeleiro = 0;
-                for (let index = 5; index < 10; index++) {
-                    if (saida[index] == "leao") {
-                        okCeleiro++;
-                    }
-                }
-
-                if (okCeleiro == 5) {
+                if (okTigre == 5) {
                     premio += 2000;
-                    okCeleiro = 0;
 
-                } else {
-                    okCeleiro = 0;
-                    for (let index = 5; index < 9; index++) {
-                        if (saida[index] == "leao") {
-                            okCeleiro++;
-                        }
-
-                    }
-
-                    if (okCeleiro == 4) {
-                        bonus = 2;
-                        okCeleiro = 0;
-
-                    } else {
-                        if (saida[5] == "leao" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                            bonus = 1;
-
-                        } else if (saida[7] == "leao" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                            bonus = 1;
-
-                        } else if (saida[6] == "leao" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                            bonus = 1;
-
-                        }
-                    }
+                } else if (okTigre == 4) {
+                    premio += 500;
 
                 }
+                okTigre = 0;
+
+                if (okGalo == 5) {
+                    bonus += 3;
+
+                } else if (okGalo == 4) {
+                    bonus += 2;
+
+                }
+                okGalo = 0;
+
+                if (okCavalo == 5) {
+                    premio += 2000;
+
+                } else if (okCavalo == 4) {
+                    bonus += 2;
+
+                }
+                okCavalo = 0;
+
+                if (okCobra == 5) {
+                    premio += 2000;
+
+                } else if (okCobra == 4) {
+                    premio += 1000;
+
+                }
+                okCobra = 0;
+
+                if (okAguia == 5) {
+                    premio += 10000;
+
+                } else if (okAguia == 4) {
+                    premio += 2000;
+
+                }
+                okAguia = 0;
+
             }
             function linha_3() {
-                //lebre
                 okLebre = 0;
+                okGato = 0;
+                okCao = 0;
+                okPavao = 0;
+                okZebra = 0;
+                okTigre = 0;
+                okGalo = 0;
+                okCavalo = 0;
+                okCobra = 0;
+                okAguia = 0;
+
                 for (let index = 10; index < 15; index++) {
                     if (saida[index] == "lebre") {
                         okLebre++;
                     }
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                    if (saida[index] == "tigre") {
+                        okTigre++;
+                    }
+                    if (saida[index] == "galo") {
+                        okGalo++;
+                    }
+                    if (saida[index] == "cavalo") {
+                        okCavalo++;
+                    }
+                    if (saida[index] == "cobra") {
+                        okCobra++;
+                    }
+                    if (saida[index] == "aguia") {
+                        okAguia++;
+                    }
+
                 }
 
                 if (okLebre == 5) {
                     premio += 30;
-                    okLebre = 0;
 
                 } else if (okLebre == 4) {
                     premio += 2;
-                    okLebre = 0;
 
                 }
-                //gato
-                okGato = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "gato") {
-                        okGato++;
-                    }
-                }
+                okLebre = 0;
 
                 if (okGato == 5) {
                     premio += 30;
-                    okGato = 0;
 
                 } else if (okGato == 4) {
                     premio += 7;
-                    okGato = 0;
 
                 }
-
-                if (saida[10] == "gato" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 5;
-
-                } else if (saida[12] == "gato" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 5;
-
-                } else if (saida[11] == "gato" && saida[11] == saida[12] && saida[11] == saida[13]) {
-                    premio += 2;
-
-                }
-                //pavao
-                okPavao = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "pavao") {
-                        okPavao++;
-                    }
-                }
-
-                if (okPavao == 5) {
-                    premio += 75;
-                    okPavao = 0;
-
-                } else if (okPavao == 4) {
-                    premio += 30;
-                    okPavao = 0;
-
-                }
-
-                if (saida[10] == "pavao" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 5;
-
-                } else if (saida[12] == "pavao" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 5;
-
-                } else if (saida[11] == "pavao" && saida[11] == saida[12] && saida[11] == saida[13]) {
-                    premio += 2;
-
-                }
-                //cao
-                okCao = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "cao") {
-                        okCao++;
-                    }
-                }
+                okGato = 0;
 
                 if (okCao == 5) {
-                    premio += 150;
-                    okCao = 0;
+                    premio += 75;
 
                 } else if (okCao == 4) {
+                    premio += 30;
+
+                }
+                okCao = 0;
+
+                if (okPavao == 5) {
+                    premio += 150;
+
+                } else if (okPavao == 4) {
                     premio += 100;
-                    okCao = 0;
 
                 }
-
-                if (saida[10] == "cao" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 7;
-
-                } else if (saida[12] == "cao" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 7;
-
-                } else if (saida[11] == "cao" && saida[11] == saida[12] && saida[11] == saida[13]) {
-                    premio += 7;
-
-                }
-
-                //zebra
-                okZebra = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "zebra") {
-                        okZebra++;
-                    }
-                }
+                okPavao = 0;
 
                 if (okZebra == 5) {
                     premio += 200;
-                    okZebra = 0;
 
                 } else if (okZebra == 4) {
                     premio += 50;
-                    okZebra = 0;
-
-                } else if (okZebra == 3) {
-                    premio += 10;
-                    okZebra = 0;
 
                 }
+                okZebra = 0;
 
-                //galo
-                okCarroca = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "galo") {
-                        okCarroca++;
-                    }
-                }
-
-                if (okCarroca == 5) {
-                    bonus = 3;
-                    okCarroca = 0;
-
-                } else {
-                    if (saida[10] == "galo" && saida[10] == saida[11] && saida[10] == saida[12] && saida[10] == saida[13]) {
-                        bonus = 2;
-
-                    } else if (saida[11] == "galo" && saida[11] == saida[12] && saida[11] == saida[13] && saida[11] == saida[14]) {
-                        bonus = 2;
-
-                    } else if (saida[10] == "galo" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                        bonus = 1;
-
-                    } else if (saida[12] == "galo" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                        bonus = 1;
-
-                    }
-                }
-                //leao
-                okCeleiro = 0;
-                for (let index = 10; index < 15; index++) {
-                    if (saida[index] == "leao") {
-                        okCeleiro++;
-                    }
-                }
-
-                if (okCeleiro == 5) {
+                if (okTigre == 5) {
                     premio += 2000;
-                    okCeleiro = 0;
 
-                } else {
-                    okCeleiro = 0;
-                    for (let index = 10; index < 14; index++) {
-                        if (saida[index] == "leao") {
-                            okCeleiro++;
-                        }
-
-                    }
-
-                    if (okCeleiro == 4) {
-                        bonus = 2;
-                        okCeleiro = 0;
-
-                    } else {
-                        if (saida[10] == "leao" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                            bonus = 1;
-
-                        } else if (saida[12] == "leao" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                            bonus = 1;
-
-                        } else if (saida[11] == "leao" && saida[11] == saida[12] && saida[11] == saida[13]) {
-                            bonus = 1;
-
-                        }
-                    }
+                } else if (okTigre == 4) {
+                    premio += 500;
 
                 }
+                okTigre = 0;
+
+                if (okGalo == 5) {
+                    bonus += 3;
+
+                } else if (okGalo == 4) {
+                    bonus += 2;
+
+                }
+                okGalo = 0;
+
+                if (okCavalo == 5) {
+                    premio += 2000;
+
+                } else if (okCavalo == 4) {
+                    bonus += 2;
+
+                }
+                okCavalo = 0;
+
+                if (okCobra == 5) {
+                    premio += 2000;
+
+                } else if (okCobra == 4) {
+                    premio += 1000;
+
+                }
+                okCobra = 0;
+
+                if (okAguia == 5) {
+                    premio += 10000;
+
+                } else if (okAguia == 4) {
+                    premio += 2000;
+
+                }
+                okAguia = 0;
+
             }
             function linha_4() {
                 //lebre
-                if (saida[0] == "lebre" && saida[0] == saida[4] && saida[0] == saida[6]
-                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                if (saida[0] == "lebre" && saida[0] == saida[6] && saida[0] == saida[12]
+                    && saida[0] == saida[8] && saida[0] == saida[4]) {
                     premio += 30;
 
-                } else if (saida[0] == "lebre" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
-                    || saida[4] == "lebre" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "lebre" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
-                    || saida[8] == "lebre" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
-                    || saida[12] == "lebre" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                } else if (saida[0] == "lebre" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "lebre" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]
+                    || saida[12] == "lebre" && saida[12] == saida[8] && saida[12] == saida[4] && saida[12] == saida[0]
+                    || saida[8] == "lebre" && saida[8] == saida[4] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[4] == "lebre" && saida[4] == saida[0] && saida[4] == saida[6] && saida[4] == saida[12]) {
                     premio += 2;
                 }
                 //gato
@@ -782,15 +655,16 @@
                     && saida[0] == saida[8] && saida[0] == saida[12]) {
                     premio += 30;
 
-                } else if (saida[0] == "gato" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
-                    || saida[4] == "gato" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "gato" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
-                    || saida[8] == "gato" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
-                    || saida[12] == "gato" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                } else if (saida[0] == "gato" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "gato" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]
+                    || saida[12] == "gato" && saida[12] == saida[8] && saida[12] == saida[4] && saida[12] == saida[0]
+                    || saida[8] == "gato" && saida[8] == saida[4] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[4] == "gato" && saida[4] == saida[0] && saida[4] == saida[6] && saida[4] == saida[12]) {
                     premio += 7;
-                }
-                if (saida[0] == "gato" && saida[0] == saida[6] && saida[0] == saida[12]) {
+
+                } else if (saida[0] == "gato" && saida[0] == saida[6] && saida[0] == saida[12]) {
                     premio += 5;
+
                 } else if (saida[12] == "gato" && saida[12] == saida[8] && saida[12] == saida[4]) {
                     premio += 5;
 
@@ -803,54 +677,54 @@
                     && saida[0] == saida[8] && saida[0] == saida[12]) {
                     premio += 75;
 
-                } else if (saida[0] == "pavao" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
-                    || saida[4] == "pavao" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "pavao" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
-                    || saida[8] == "pavao" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
-                    || saida[12] == "pavao" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                } else if (saida[0] == "pavao" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "pavao" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]
+                    || saida[12] == "pavao" && saida[12] == saida[8] && saida[12] == saida[4] && saida[12] == saida[0]
+                    || saida[8] == "pavao" && saida[8] == saida[4] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[4] == "pavao" && saida[4] == saida[0] && saida[4] == saida[6] && saida[4] == saida[12]) {
                     premio += 30;
-                }
-                if (saida[0] == "pavao" && saida[0] == saida[6] && saida[0] == saida[12]) {
-                    premio += 5;
-                } else if (saida[12] == "pavao" && saida[12] == saida[8] && saida[12] == saida[4]) {
-                    premio += 5;
+                } else
+                    if (saida[0] == "pavao" && saida[0] == saida[6] && saida[0] == saida[12]) {
+                        premio += 5;
+                    } else if (saida[12] == "pavao" && saida[12] == saida[8] && saida[12] == saida[4]) {
+                        premio += 5;
 
-                } else if (saida[6] == "pavao" && saida[6] == saida[12] && saida[6] == saida[8]) {
-                    premio += 2;
+                    } else if (saida[6] == "pavao" && saida[6] == saida[12] && saida[6] == saida[8]) {
+                        premio += 2;
 
-                }
+                    }
                 //cao
                 if (saida[0] == "cao" && saida[0] == saida[4] && saida[0] == saida[6]
                     && saida[0] == saida[8] && saida[0] == saida[12]) {
                     premio += 150;
 
-                } else if (saida[0] == "cao" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
-                    || saida[4] == "cao" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "cao" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
-                    || saida[8] == "cao" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
-                    || saida[12] == "cao" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                } else if (saida[0] == "cao" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "cao" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]
+                    || saida[12] == "cao" && saida[12] == saida[8] && saida[12] == saida[4] && saida[12] == saida[0]
+                    || saida[8] == "cao" && saida[8] == saida[4] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[4] == "cao" && saida[4] == saida[0] && saida[4] == saida[6] && saida[4] == saida[12]) {
                     premio += 100;
-                }
-                if (saida[0] == "cao" && saida[0] == saida[6] && saida[0] == saida[12]) {
-                    premio += 7;
-                } else if (saida[12] == "cao" && saida[12] == saida[8] && saida[12] == saida[4]) {
-                    premio += 7;
+                } else
+                    if (saida[0] == "cao" && saida[0] == saida[6] && saida[0] == saida[12]) {
+                        premio += 7;
+                    } else if (saida[12] == "cao" && saida[12] == saida[8] && saida[12] == saida[4]) {
+                        premio += 7;
 
-                } else if (saida[6] == "cao" && saida[6] == saida[12] && saida[6] == saida[8]) {
-                    premio += 7;
+                    } else if (saida[6] == "cao" && saida[6] == saida[12] && saida[6] == saida[8]) {
+                        premio += 7;
 
-                }
+                    }
 
                 //zebra
                 if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6]
                     && saida[0] == saida[8] && saida[0] == saida[12]) {
                     premio += 200;
 
-                } else if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
-                    || saida[4] == "zebra" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "zebra" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
-                    || saida[8] == "zebra" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
-                    || saida[12] == "zebra" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                } else if (saida[0] == "zebra" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "zebra" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]
+                    || saida[12] == "zebra" && saida[12] == saida[8] && saida[12] == saida[4] && saida[12] == saida[0]
+                    || saida[8] == "zebra" && saida[8] == saida[4] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[4] == "zebra" && saida[4] == saida[0] && saida[4] == saida[6] && saida[4] == saida[12]) {
                     premio += 50;
 
                 } else if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6]
@@ -863,31 +737,30 @@
                 }
 
                 //galo
-                if (saida[0] == "galo" && saida[0] == saida[4] && saida[0] == saida[6]
-                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                if (saida[0] == "galo" && saida[0] == saida[6] && saida[0] == saida[12]
+                    && saida[0] == saida[8] && saida[0] == saida[4]) {
                     bonus = 3;
 
-                } else if (saida[4] == "galo" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "galo" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]) {
+                } else if (saida[0] == "galo" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]
+                    || saida[6] == "galo" && saida[6] == saida[12] && saida[6] == saida[8] && saida[6] == saida[4]) {
                     bonus = 2;
 
-                } else if (saida[6] == "galo" && saida[6] == saida[8] && saida[6] == saida[12]
-                    || saida[8] == "galo" && saida[8] == saida[12] && saida[8] == saida[4]
-                    || saida[12] == "galo" && saida[12] == saida[0] && saida[12] == saida[6]) {
+                } else if (saida[0] == "galo" && saida[0] == saida[6] && saida[0] == saida[12]
+                    || saida[12] == "galo" && saida[12] == saida[8] && saida[12] == saida[4]) {
                     bonus = 1;
 
                 }
 
-                //leao
-                if (saida[0] == "leao" && saida[0] == saida[4] && saida[0] == saida[6]
+                //lebre
+                if (saida[0] == "lebre" && saida[0] == saida[4] && saida[0] == saida[6]
                     && saida[0] == saida[8] && saida[0] == saida[12]) {
                     premio += 2000;
 
-                } else if (saida[0] == "leao" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]) {
+                } else if (saida[0] == "lebre" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]) {
                     bonus = 2;
 
-                } else if (saida[4] == "leao" && saida[4] == saida[8] && saida[4] == saida[12]
-                    || saida[6] == "leao" && saida[6] == saida[8] && saida[6] == saida[12]) {
+                } else if (saida[4] == "lebre" && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "lebre" && saida[6] == saida[8] && saida[6] == saida[12]) {
                     bonus = 1;
 
                 }
@@ -920,17 +793,17 @@
                     || saida[10] == "gato" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
                     || saida[14] == "gato" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
                     premio += 7;
-                }
+                } else
 
-                if (saida[10] == "gato" && saida[10] == saida[6] && saida[10] == saida[2]) {
-                    premio += 5;
-                } else if (saida[2] == "gato" && saida[2] == saida[8] && saida[2] == saida[14]) {
-                    premio += 5;
+                    if (saida[10] == "gato" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                        premio += 5;
+                    } else if (saida[2] == "gato" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                        premio += 5;
 
-                } else if (saida[6] == "gato" && saida[6] == saida[2] && saida[6] == saida[8]) {
-                    premio += 2;
+                    } else if (saida[6] == "gato" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                        premio += 2;
 
-                }
+                    }
                 //pavao
                 if (saida[2] == "pavao" && saida[2] == saida[6] && saida[2] == saida[8]
                     && saida[2] == saida[10] && saida[2] == saida[14]) {
@@ -942,17 +815,17 @@
                     || saida[10] == "pavao" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
                     || saida[14] == "pavao" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
                     premio += 30;
-                }
+                } else
 
-                if (saida[10] == "pavao" && saida[10] == saida[6] && saida[10] == saida[2]) {
-                    premio += 5;
-                } else if (saida[2] == "pavao" && saida[2] == saida[8] && saida[2] == saida[14]) {
-                    premio += 5;
+                    if (saida[10] == "pavao" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                        premio += 5;
+                    } else if (saida[2] == "pavao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                        premio += 5;
 
-                } else if (saida[6] == "pavao" && saida[6] == saida[2] && saida[6] == saida[8]) {
-                    premio += 2;
+                    } else if (saida[6] == "pavao" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                        premio += 2;
 
-                }
+                    }
                 //cao
                 if (saida[2] == "cao" && saida[2] == saida[6] && saida[2] == saida[8]
                     && saida[2] == saida[10] && saida[2] == saida[14]) {
@@ -964,17 +837,17 @@
                     || saida[10] == "cao" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
                     || saida[14] == "cao" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
                     premio += 100;
-                }
+                } else
 
-                if (saida[10] == "cao" && saida[10] == saida[6] && saida[10] == saida[2]) {
-                    premio += 7;
-                } else if (saida[2] == "cao" && saida[2] == saida[8] && saida[2] == saida[14]) {
-                    premio += 7;
+                    if (saida[10] == "cao" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                        premio += 7;
+                    } else if (saida[2] == "cao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                        premio += 7;
 
-                } else if (saida[6] == "cao" && saida[6] == saida[2] && saida[6] == saida[8]) {
-                    premio += 7;
+                    } else if (saida[6] == "cao" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                        premio += 7;
 
-                }
+                    }
 
                 //zebra
                 if (saida[2] == "zebra" && saida[2] == saida[6] && saida[2] == saida[8]
@@ -1011,16 +884,16 @@
                     bonus = 1;
 
                 }
-                //leao
-                if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[8]
+                //lebre
+                if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[8]
                     && saida[2] == saida[10] && saida[2] == saida[14]) {
                     premio += 2000;
 
-                } else if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]) {
+                } else if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]) {
                     bonus = 2;
 
-                } else if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[10]
-                    || saida[2] == "leao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                } else if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[10]
+                    || saida[2] == "lebre" && saida[2] == saida[8] && saida[2] == saida[14]) {
                     bonus = 1;
 
                 }
@@ -1030,31 +903,62 @@
             }
 
             document.getElementById('premio').innerHTML = premio;
+            document.getElementById('bonus').innerHTML = bonus;
+            document.getElementById('premioPago').innerHTML = premioPago;
+        }
 
-            console.log("linha 1");
-            for (let index = 0; index < 5; index++) {
-                console.log(index + " " + saida[index]);
+        function mostrarJogo_2(premio) {
+            if (premio) {
+                document.getElementById('jogo_1').style.display = 'none';
+                document.getElementById('jogo_2').style.display = 'block';
+                document.getElementById('bonus').style.display = bonus;
 
-            }
-
-            console.log("linha 2");
-            for (let index = 5; index < 10; index++) {
-                console.log(index + " " + saida[index]);
-
-            }
-
-            console.log("linha 3");
-            for (let index = 10; index < 15; index++) {
-                console.log(index + " " + saida[index]);
+            } else {
+                document.getElementById('jogo_1').style.display = 'block';
+                document.getElementById('jogo_2').style.display = 'none';
 
             }
+        }
+
+        function animacaoJogo_2(botao) {
+            desabilitaBotoes(botao);
+
+            audio.fadeOut = true;
+            audio.play();
+            audio.volume = 0.1;
+            setCurrentTime(5);
+
+            setTimeout(tempo = setInterval(randomBonus, 1), 1000);
+            setTimeout(() => {
+                clearInterval(tempo);
+                setTimeout(() => {
+                    mostrarJogo_2(false);
+                    premio += premioBonus;
+                    bonus = 0;
+                    premioBonus = 0;
+                    document.getElementById('premio').innerHTML = premio;
+                    document.getElementById('bonus').innerHTML = bonus;
+                    document.getElementById('valorPremioBonus_1').innerHTML = premioBonus;
+                    document.getElementById('btnAutoText').innerHTML = 'AUTO OFF';
+                    clearInterval(a);
+                    clearInterval(t);
+                }, 3000);
+            }, 3000);
+
+        }
+
+        function randomBonus() {
+            valor = Math.floor(Math.random() * (1000 * bonus));
+            numero = document.getElementById('valorPremioBonus_1');
+            numero.innerHTML = valor;
+            premioBonus = valor;
         }
 
     </script>
 
     <style>
         body {
-            background-image: url("./img/background.jpeg");
+            background-image: url("./img2/background.jpeg");
             background-position: center;
             text-align: center;
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -1064,7 +968,7 @@
         @media only screen and (min-width: 1366px) {}
 
         .grupos {
-            margin-top: 20px;
+            margin-top: 45px;
         }
 
         .placar,
@@ -1099,21 +1003,7 @@
 
         }
 
-        .img_1,
-        .img_2,
-        .img_3,
-        .img_4,
-        .img_5,
-        .img_6,
-        .img_7,
-        .img_8,
-        .img_9,
-        .img_10,
-        .img_11,
-        .img_12,
-        .img_13,
-        .img_14,
-        .img_15 {
+        .img_1 {
             border-radius: 12px;
             width: 70px;
             height: 70px;
@@ -1121,7 +1011,7 @@
             box-shadow: 10px 8px 5px 0 rgb(48, 78, 247), 10px 10px 10px 0 white;
         }
 
-        button {
+        .btnControleJogo-1 {
             width: 120px;
             height: 35px;
             border-radius: 5px;
@@ -1132,7 +1022,7 @@
             font-size: medium;
         }
 
-        button:hover {
+        .btnControleJogo-1:hover {
             background-color: deepskyblue;
             text-transform: uppercase;
             color: black;
@@ -1143,6 +1033,31 @@
             text-transform: uppercase;
 
         }
+
+        #painelContador {
+            display: inline-flex;
+        }
+
+        .jogo_2 {
+            display: none;
+        }
+
+        .premioBonus_1,
+        .controles_2 {
+            margin-top: 90px;
+
+        }
+
+        .btnControle_2 {
+            background-color: transparent;
+            border: none;
+        }
+
+        .img_2 {
+            border-radius: 12px;
+            width: 80px;
+            height: 80px;
+        }
     </style>
 </head>
 
@@ -1151,6 +1066,10 @@
         <div class="placar">
             <div class="creditos">
                 <p>Créditos: <span id="dinheiro"></span></p>
+                <div id="painelContador">
+                    <img class="bicho" src="./img2/tigre.png">
+                    <p><span id="premioPago">0</span></p>
+                </div>
             </div>
 
             <div class="premios">
@@ -1159,96 +1078,129 @@
 
             <div class="apostas">
                 <p>Aposta: <span id="apostas">1</span></p>
-                <p><span id="contador">1</span></p>
-            </div>
-        </div>
-
-        <div class="grupos">
-            <div class="grupo1">
-                <div class="linha">
-                    <img class="img_1" id="img_1" src="./img/tigre.png">
-
-                    <img class="img_2" id="img_2" src="./img/aguia.png">
-
-                    <img class="img_3" id="img_3" src="./img/galo.png">
-
-                    <img class="img_4" id="img_4" src="./img/cao.png">
-
-                    <img class="img_5" id="img_5" src="./img/gato.png">
-                </div>
-            </div>
-
-            <div class="grupo2">
-                <div class="linha">
-                    <img class="img_6" id="img_6" src="./img/zebra.png">
-
-                    <img class="img_7" id="img_7" src="./img/zebra.png">
-
-                    <img class="img_8" id="img_8" src="./img/cobra.png">
-
-                    <img class="img_9" id="img_9" src="./img/cavalo.png">
-
-                    <img class="img_10" id="img_10" src="./img/pavao.png">
-                </div>
-            </div>
-
-            <div class="grupo3">
-                <div class="linha">
-                    <img class="img_11" id="img_11" src="./img/tigre.png">
-
-                    <img class="img_12" id="img_12" src="./img/zebra.png">
-
-                    <img class="img_13" id="img_13" src="./img/cao.png">
-
-                    <img class="img_14" id="img_14" src="./img/gato.png">
-
-                    <img class="img_15" id="img_15" src="./img/zebra.png">
+                <div id="painelContador">
+                    <img class="bicho" src="./img2/aguia.png">
+                    <p><span id="contador">1</span></p>
                 </div>
             </div>
         </div>
 
-        <div class="bonus">
-            <div class="bonusBichos"><span id="bonusTrigre">00,00</span>
-                <div class="grupoTigres">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                </div>
+        <div id="jogo_2" class="jogo_2">
+            <div class="premioBonus_1" id="premioBonus_1">
+                <h1>X <span id="bonus">0</span></h1>
+                <h1>
+                    <span id="valorPremioBonus_1">0</span>
+                </h1>
             </div>
-            <div class="bonusBichos"><span id="bonusAguia">00,00</span>
-                <div class="grupoTigres">
-                    <img class="bicho" src="./img/aguia.png">
-                    <img class="bicho" src="./img/aguia.png">
-                    <img class="bicho" src="./img/aguia.png">
-                    <img class="bicho" src="./img/aguia.png">
-                    <img class="bicho" src="./img/aguia.png">
-                </div>
-            </div>
-            <div class="bonusBichos"><span id="bonusTrigre2">00,00</span>
-                <div class="grupoTigres">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                    <img class="bicho" src="./img/tigre.png">
-                </div>
-            </div>
-            <div class="bonusBichos">
-                <span id="bonus">0</span>
-                <div class="saidaBonus">
-                    <img class="bicho" src="./img/galo.png">
-                </div>
+
+            <div class="controles_2">
+                <button class="btnControle_2" id="btnJogo_1" onclick="animacaoJogo_2('btnJogo_1')">
+                    <img class="img_2" src="./img2/aguia.png">
+                </button>
+                <button class="btnControle_2" id="btnJogo_2" onclick="animacaoJogo_2('btnJogo_2')">
+                    <img class="img_2" src="./img2/aguia.png">
+                </button>
+                <button class="btnControle_2" id="btnJogo_3" onclick="animacaoJogo_2('btnJogo_3')">
+                    <img class="img_2" src="./img2/aguia.png">
+                </button>
+                <button class="btnControle_2" id="btnJogo_4" onclick="animacaoJogo_2('btnJogo_4')">
+                    <img class="img_2" src="./img2/aguia.png">
+                </button>
+                <button class="btnControle_2" id="btnJogo_5" onclick="animacaoJogo_2('btnJogo_5')">
+                    <img class="img_2" src="./img2/aguia.png">
+                </button>
             </div>
         </div>
 
-        <div id="controles">
-            <button id="btnAutomatico" value="true" onclick="javascript:jogar('true')">
-                <span id="btnAutoText">AUTO OFF</span></button>
-            <button id="btnJogar" value="false" onclick="javascript:jogar('false')">JOGAR</button>
-            <button id="btnDepositar" onclick="javascript:depositar()">DEPOSITAR</button>
-            <button id="btnAposta" onclick="javascript:almentarAposta()">APOSTA</button>
-            <button id="btnLinhas" onclick="javascript:setLinhas()">LINHA <span>1</span></button>
+        <div id="jogo_1" class="jogo_1">
+            <div class="grupos" id="grupos">
+                <div class="grupo1">
+                    <div class="linha">
+                        <img class="img_1" id="img_1" src="./img2/tigre.png">
+
+                        <img class="img_1" id="img_2" src="./img2/aguia.png">
+
+                        <img class="img_1" id="img_3" src="./img2/lebre.png">
+
+                        <img class="img_1" id="img_4" src="./img2/cao.png">
+
+                        <img class="img_1" id="img_5" src="./img2/gato.png">
+                    </div>
+                </div>
+
+                <div class="grupo2">
+                    <div class="linha">
+                        <img class="img_1" id="img_6" src="./img2/zebra.png">
+
+                        <img class="img_1" id="img_7" src="./img2/zebra.png">
+
+                        <img class="img_1" id="img_8" src="./img2/cobra.png">
+
+                        <img class="img_1" id="img_9" src="./img2/cavalo.png">
+
+                        <img class="img_1" id="img_10" src="./img2/pavao.png">
+                    </div>
+                </div>
+
+                <div class="grupo3">
+                    <div class="linha">
+                        <img class="img_1" id="img_11" src="./img2/tigre.png">
+
+                        <img class="img_1" id="img_12" src="./img2/lebre.png">
+
+                        <img class="img_1" id="img_13" src="./img2/cao.png">
+
+                        <img class="img_1" id="img_14" src="./img2/gato.png">
+
+                        <img class="img_1" id="img_15" src="./img2/zebra.png">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bonus">
+                <div class="bonusBichos"><span id="bonusTrigre">00,00</span>
+                    <div class="grupoTigres">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                    </div>
+                </div>
+                <div class="bonusBichos"><span id="bonusAguia">00,00</span>
+                    <div class="grupoTigres">
+                        <img class="bicho" src="./img2/aguia.png">
+                        <img class="bicho" src="./img2/aguia.png">
+                        <img class="bicho" src="./img2/aguia.png">
+                        <img class="bicho" src="./img2/aguia.png">
+                        <img class="bicho" src="./img2/aguia.png">
+                    </div>
+                </div>
+                <div class="bonusBichos"><span id="bonusTrigre2">00,00</span>
+                    <div class="grupoTigres">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                        <img class="bicho" src="./img2/tigre.png">
+                    </div>
+                </div>
+                <div class="bonusBichos">
+                    <span id="bonus">0</span>
+                    <div class="saidaBonus">
+                        <img class="bicho" src="./img2/galo.png">
+                    </div>
+                </div>
+            </div>
+
+            <div id="controles">
+                <button class="btnControleJogo-1" id="btnAutomatico" value="true" onclick="jogar('true')">
+                    <span id="btnAutoText">AUTO OFF</span></button>
+                <button class="btnControleJogo-1" id="btnJogar" value="false" onclick="jogar('false')">JOGAR</button>
+                <button class="btnControleJogo-1" id="btnDepositar" onclick="depositar()">DEPOSITAR</button>
+                <button class="btnControleJogo-1" id="btnAposta" onclick="almentarAposta()">APOSTA</button>
+                <button class="btnControleJogo-1" id="btnLinhas" onclick="setLinhas()">LINHA <span
+                        id="qtdeLinhas">1</span></button>
+            </div>
         </div>
     </div>
 </body>
