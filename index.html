@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Jogo roleta</title>
+    <title>Cassino</title>
 
     <script>
         dir = "./img/";
@@ -13,20 +13,19 @@
         dinheiro = 0;
         aposta = 1;
         premio = 0;
+        bonus = "";
         maior = 0;
+        totalLinhas = 1;
 
-        imagens = ['tigre', 'aguia', 'cao', 'gato', 'cavalo', 'lebre', 'cobra', 'galo', 'pavao','zebra'];
+        imagens = ['tigre', 'cao', 'gato', 'lebre', 'cobra', 'galo', 'pavao', 'aguia', 'zebra','cavalo'];
 
         elemento = ['img_1', 'img_2', 'img_3', 'img_4', 'img_5', 'img_6', 'img_7', 'img_8',
             'img_9', 'img_10', 'img_11', 'img_12', 'img_13', 'img_14', 'img_15'];
+
         saida = [];
 
         posicaoImagens = 0;
         posicaoElemento = 0;
-
-        let context,
-            oscillator,
-            type = 'triangle';
 
         var a;
         var t;
@@ -52,21 +51,16 @@
         }
 
         function rodar() {
-            if (dinheiro > 0) {
+            if (dinheiro > 0 && dinheiro >= totalLinhas) {
                 desabilitaBotoes();
                 cont = 0;
-                dinheiro -= aposta;
-
-                if (dinheiro < aposta && dinheiro != 0) {
-                    setAposta(dinheiro);
-                }
 
                 processarDinheiro();
                 setTimeout(t = setInterval(randomImagens, 1), 2000);
                 parar();
 
             } else {
-                document.getElementById('btnAutoText').innerHTML = 'Automatico';
+                document.getElementById('btnAutoText').innerHTML = 'AUTO OFF';
                 clearInterval(a);
                 clearInterval(t);
             }
@@ -88,9 +82,17 @@
             }, 3000);
         }
 
-        totalLinhas = 1;
         function setLinhas() {
-            totalLinhas += 1;
+            if (totalLinhas < 9) {
+                totalLinhas += 4;
+
+            } else if (totalLinhas >= 9 && totalLinhas < 15) {
+                totalLinhas += 6;
+            } else if (totalLinhas == 15) {
+                totalLinhas += 10;
+            } else {
+                totalLinhas = 1;
+            }
             document.getElementById('btnLinhas').innerHTML = "LINHAS " + totalLinhas;
             document.getElementById('apostas').innerHTML = totalLinhas;
         }
@@ -106,666 +108,9 @@
             calcularPremio();
         }
 
-
-
-        function calcularPremio() {
-            console.clear();
-
-            switch (totalLinhas) {
-                case 1:
-                    linha_1();
-                    break;
-
-                case 2:
-                    linha_2();
-                    break;
-
-                case 3:
-                    linha_3();
-                case 4:
-                    linha_4();
-
-                default:
-                    break;
-            }
-
-            function linha_1() {
-                //lebre
-                //lebre {}
-                if (saida[5] == "lebre" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //lebre 4 <-->
-                if (saida[5] == "lebre" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "lebre" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "lebre" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "lebre" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "lebre" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato
-                //gato {}
-                if (saida[5] == "gato" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 4 <-->
-                if (saida[5] == "gato" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "gato" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "gato" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "gato" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "gato" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 3 -> ou <-
-                if (saida[5] == "gato" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[7] == "gato" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 3 {<-->}
-                if (saida[6] == "gato" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //pavao
-                //pavao {}
-                if (saida[5] == "pavao" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 75;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //pavao 4 <-->
-                if (saida[5] == "pavao" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "pavao" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "pavao" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "pavao" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "pavao" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //pavao 3 -> ou <-
-                if (saida[5] == "pavao" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[7] == "pavao" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //pavao 3 {<-->}
-                if (saida[6] == "pavao" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //cao {}
-                if (saida[5] == "cao" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 150;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 4 <-->
-                if (saida[5] == "cao" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "cao" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "cao" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "cao" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "cao" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 100;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 3 -> ou <-
-                if (saida[5] == "cao" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[7] == "cao" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 3 {<-->}
-                if (saida[6] == "cao" && saida[6] == saida[7] && saida[6] == saida[8]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //zebra {}
-                if (saida[5] == "zebra" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //zebra 4 ->
-                if (saida[5] == "zebra" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "zebra" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "zebra" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "zebra" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "zebra" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 500;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //zebra 3 -> ou <-
-                if (saida[5] == "zebra" && saida[5] == saida[6] && saida[5] == saida[7]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[7] == "zebra" && saida[7] == saida[8] && saida[7] == saida[9]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //cavalo {}
-                if (saida[5] == "cavalo" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8] && saida[5] == saida[9]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cavalo 4 <-->
-                if (saida[5] == "cavalo" && saida[5] == saida[6] && saida[5] == saida[7]
-                    && saida[5] == saida[8]
-                    || saida[6] == "cavalo" && saida[6] == saida[7] && saida[6] == saida[8]
-                    && saida[6] == saida[9]
-                    || saida[7] == "cavalo" && saida[7] == saida[8] && saida[7] == saida[9]
-                    && saida[7] == saida[5]
-                    || saida[8] == "cavalo" && saida[8] == saida[9] && saida[8] == saida[5]
-                    && saida[8] == saida[6]
-                    || saida[9] == "cavalo" && saida[9] == saida[5] && saida[9] == saida[6]
-                    && saida[9] == saida[7]) {
-                    premio += 50;//bonus x2
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cavalo 3 <-->
-                if (saida[5] == "cavalo" && saida[5] == saida[6] && saida[5] == saida[7]
-                    || saida[6] == "cavalo" && saida[6] == saida[7] && saida[6] == saida[8]
-                    || saida[7] == "cavalo" && saida[7] == saida[8] && saida[7] == saida[9]
-                    || saida[8] == "cavalo" && saida[8] == saida[9] && saida[8] == saida[5]
-                    || saida[9] == "cavalo" && saida[9] == saida[5] && saida[9] == saida[6]) {
-                    premio += 10;//bonus x1
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-            }
-
-            function linha_2() {
-                //lebre {}
-                if (saida[0] == "lebre" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //lebre 4 <-->
-                if (saida[0] == "lebre" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "lebre" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "lebre" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "lebre" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "lebre" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //gato cheio { }
-                if (saida[0] == "gato" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //gato 4 <-->
-                if (saida[0] == "gato" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "gato" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "gato" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "gato" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "gato" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 3 -> ou <-
-                if (saida[0] == "gato" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[2] == "gato" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 3 {<-->}
-                if (saida[1] == "gato" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //pavao cheio { }
-                if (saida[0] == "pavao" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 75;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //pavao 4 <-->
-                if (saida[0] == "pavao" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "pavao" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "pavao" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "pavao" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "pavao" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //pavao 3 -> ou <-
-                if (saida[0] == "pavao" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[2] == "pavao" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //pavao 3 {<-->}
-                if (saida[1] == "pavao" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //cao cheio { }
-                if (saida[0] == "cao" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 150;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cao 4 <-->
-                if (saida[0] == "cao" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "cao" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "cao" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "cao" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "cao" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 100;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 3 -> ou <-
-                if (saida[0] == "cao" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[2] == "cao" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 3 {<-->}
-                if (saida[1] == "cao" && saida[1] == saida[2] && saida[1] == saida[3]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //zebra {}
-                if (saida[0] == "zebra" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //zebra 4 ->
-                if (saida[0] == "zebra" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "zebra" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "zebra" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "zebra" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "zebra" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 500;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //zebra 3 -> ou <-
-                if (saida[0] == "zebra" && saida[0] == saida[1] && saida[0] == saida[2]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[2] == "zebra" && saida[2] == saida[3] && saida[2] == saida[4]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //cavalo {}
-                if (saida[0] == "cavalo" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3] && saida[0] == saida[4]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cavalo 4 <-->
-                if (saida[0] == "cavalo" && saida[0] == saida[1] && saida[0] == saida[2]
-                    && saida[0] == saida[3]
-                    || saida[1] == "cavalo" && saida[1] == saida[2] && saida[1] == saida[3]
-                    && saida[1] == saida[4]
-                    || saida[2] == "cavalo" && saida[2] == saida[3] && saida[2] == saida[4]
-                    && saida[2] == saida[0]
-                    || saida[3] == "cavalo" && saida[3] == saida[4] && saida[3] == saida[0]
-                    && saida[3] == saida[1]
-                    || saida[4] == "cavalo" && saida[4] == saida[0] && saida[4] == saida[1]
-                    && saida[4] == saida[2]) {
-                    premio += 50;//bonus x2
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cavalo 3 <-->
-                if (saida[0] == "cavalo" && saida[0] == saida[1] && saida[0] == saida[2]
-                    || saida[1] == "cavalo" && saida[1] == saida[2] && saida[1] == saida[3]
-                    || saida[2] == "cavalo" && saida[2] == saida[3] && saida[2] == saida[4]
-                    || saida[3] == "cavalo" && saida[3] == saida[4] && saida[3] == saida[0]
-                    || saida[4] == "cavalo" && saida[4] == saida[0] && saida[4] == saida[1]) {
-                    premio += 10;//bonus x1
-                    document.getElementById('premio').innerHTML = premio;
-                }
-            }
-
-            function linha_3() {
-                //lebre {}
-                if (saida[10] == "lebre" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //lebre 4 <-->
-                if (saida[10] == "lebre" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "lebre" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "lebre" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "lebre" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "lebre" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //gato {}
-                if (saida[10] == "gato" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //gato 4 <-->
-                if (saida[10] == "gato" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "gato" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "gato" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "gato" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "gato" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //gato 3 -> ou <-
-                if (saida[10] == "gato" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[12] == "gato" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //gato 3 {<-->}
-                if (saida[11] == "gato" && saida[10] == saida[12] && saida[11] == saida[13]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //pavao {}
-                if (saida[10] == "pavao" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 75;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //pavao 4 <-->
-                if (saida[10] == "pavao" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "pavao" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "pavao" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "pavao" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "pavao" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 30;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //pavao 3 -> ou <-
-                if (saida[10] == "pavao" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[12] == "pavao" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 5;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //pavao 3 {<-->}
-                if (saida[11] == "pavao" && saida[10] == saida[12] && saida[11] == saida[13]) {
-                    premio += 2;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cao {}
-                if (saida[10] == "cao" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 150;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cao 4 <-->
-                if (saida[10] == "cao" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "cao" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "cao" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "cao" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "cao" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 100;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cao 3 -> ou <-
-                if (saida[10] == "cao" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[12] == "cao" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cao 3 {<-->}
-                if (saida[11] == "cao" && saida[10] == saida[12] && saida[11] == saida[13]) {
-                    premio += 7;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //zebra {}
-                if (saida[10] == "zebra" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //zebra 4 ->
-                if (saida[10] == "zebra" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "zebra" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "zebra" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "zebra" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "zebra" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 500;
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-
-                //zebra 3 -> ou <-
-                if (saida[10] == "zebra" && saida[10] == saida[11] && saida[10] == saida[12]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-
-                } else if (saida[12] == "zebra" && saida[12] == saida[13] && saida[12] == saida[14]) {
-                    premio += 250;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-
-                //cavalo {}
-                if (saida[10] == "cavalo" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13] && saida[10] == saida[14]) {
-                    premio += 2000;
-                    document.getElementById('premio').innerHTML = premio;
-                }
-                //cavalo 4 <-->
-                if (saida[10] == "cavalo" && saida[10] == saida[11] && saida[10] == saida[12]
-                    && saida[10] == saida[13]
-                    || saida[11] == "cavalo" && saida[11] == saida[12] && saida[11] == saida[13]
-                    && saida[11] == saida[14]
-                    || saida[12] == "cavalo" && saida[12] == saida[13] && saida[12] == saida[14]
-                    && saida[12] == saida[10]
-                    || saida[13] == "cavalo" && saida[13] == saida[14] && saida[13] == saida[10]
-                    && saida[13] == saida[11]
-                    || saida[14] == "cavalo" && saida[14] == saida[10] && saida[14] == saida[11]
-                    && saida[14] == saida[12]) {
-                    premio += 50;//bonus x2
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-                //cavalo 3 <-->
-                if (saida[10] == "cavalo" && saida[10] == saida[11] && saida[10] == saida[12]
-                    || saida[11] == "cavalo" && saida[11] == saida[12] && saida[11] == saida[13]
-                    || saida[12] == "cavalo" && saida[12] == saida[13] && saida[12] == saida[14]
-                    || saida[13] == "cavalo" && saida[13] == saida[14] && saida[13] == saida[10]
-                    || saida[14] == "cavalo" && saida[14] == saida[10] && saida[14] == saida[11]) {
-                    premio += 50;//bonus x1
-                    document.getElementById('premio').innerHTML = premio;
-
-                }
-            }
-
-            function linha_4() {
-                for (let index = 0; index < 4; index++) {
-                    if (saida[index] == 'lebre') {
-                        premio = 20;
-                    }
-
-                }
-                for (let index = 5; index < 9; index++) {
-                    if (saida[index] == 'lebre') {
-                        premio = 20;
-                    }
-
-                }
-                for (let index = 10; index < 14; index++) {
-                    if (saida[index] == 'lebre') {
-                        premio = 20;
-                    }
-
-                }
-            }
-            for (let index = 0; index < saida.length; index++) {
-                console.log(index + " " + saida[index]);
-
-            }
-
-        }
-
         function processarDinheiro() {
+            dinheiro -= totalLinhas;
+
             document.getElementById('dinheiro').innerHTML = dinheiro.toFixed(2).replace(".", ",");
         }
 
@@ -786,11 +131,12 @@
         }
 
         function almentarAposta() {
+            valorAposta++;
 
         }
 
         function depositar() {
-            dinheiro += 100;
+            dinheiro += 10;
             aposta = 1;
 
             document.getElementById('btnLinhas').innerHTML = "LINHA " + aposta;
@@ -817,6 +163,893 @@
             document.getElementById('btnAutomatico').disabled = false;
             document.getElementById('btnLinhas').disabled = false;
         }
+
+        function calcularPremio() {
+            console.clear();
+
+            switch (totalLinhas) {
+                case 1:
+                    linha_1();
+                    break;
+
+                case 5:
+                    linha_1();
+                    linha_2();
+                    linha_3();
+                    linha_4();
+                    linha_5();
+                    break;
+
+                default:
+                    break;
+            }
+
+            function linha_1() {
+                //lebre
+                okLebre = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "lebre") {
+                        okLebre++;
+                    }
+                }
+
+                if (okLebre == 5) {
+                    premio += 30;
+                    okLebre = 0;
+
+                } else if (okLebre == 4) {
+                    premio += 2;
+                    okLebre = 0;
+
+                }
+
+                //gato
+                okGato = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                }
+
+                if (okGato == 5) {
+                    premio += 30;
+                    okGato = 0;
+
+                } else if (okGato == 4) {
+                    premio += 7;
+                    okGato = 0;
+
+                }
+
+                if (saida[0] == "gato" && saida[0] == saida[1] && saida[0] == saida[2]) {
+                    premio += 5;
+
+                } else if (saida[2] == "gato" && saida[2] == saida[3] && saida[2] == saida[4]) {
+                    premio += 5;
+
+                } else if (saida[1] == "gato" && saida[1] == saida[2] && saida[1] == saida[3]) {
+                    premio += 2;
+
+                }
+
+                //pavao
+                okPavao = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                }
+
+                if (okPavao == 5) {
+                    premio += 75;
+                    okPavao = 0;
+
+                } else if (okPavao == 4) {
+                    premio += 30;
+                    okPavao = 0;
+
+                }
+
+                if (saida[0] == "pavao" && saida[0] == saida[1] && saida[0] == saida[2]) {
+                    premio += 5;
+
+                } else if (saida[2] == "pavao" && saida[2] == saida[3] && saida[2] == saida[4]) {
+                    premio += 5;
+
+                } else if (saida[1] == "pavao" && saida[1] == saida[2] && saida[1] == saida[3]) {
+                    premio += 2;
+
+                }
+
+                //cao
+                okCao = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                }
+
+                if (okCao == 5) {
+                    premio += 150;
+                    okCao = 0;
+
+                } else if (okCao == 4) {
+                    premio += 100;
+                    okCao = 0;
+
+                }
+
+                if (saida[0] == "cao" && saida[0] == saida[1] && saida[0] == saida[2]) {
+                    premio += 7;
+
+                } else if (saida[2] == "cao" && saida[2] == saida[3] && saida[2] == saida[4]) {
+                    premio += 7;
+
+                } else if (saida[1] == "cao" && saida[1] == saida[2] && saida[1] == saida[3]) {
+                    premio += 7;
+
+                }
+
+                //zebra
+                okZebra = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                }
+
+                if (okZebra == 5) {
+                    premio += 200;
+                    okZebra = 0;
+
+                } else if (okZebra == 4) {
+                    premio += 50;
+                    okZebra = 0;
+
+                } else if (okZebra == 3) {
+                    premio += 10;
+                    okZebra = 0;
+
+                }
+
+                //galo
+                okCarroca = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "galo") {
+                        okCarroca++;
+                    }
+                }
+
+                if (okCarroca == 5) {
+                    bonus = 3;
+                    okCarroca = 0;
+
+                } else {
+                    if (saida[0] == "galo" && saida[0] == saida[1] && saida[0] == saida[2] && saida[0] == saida[3]) {
+                        bonus = 2;
+
+                    } else if (saida[1] == "galo" && saida[1] == saida[2] && saida[1] == saida[3] && saida[1] == saida[4]) {
+                        bonus = 2;
+
+                    } else if (saida[0] == "galo" && saida[0] == saida[1] && saida[0] == saida[2]) {
+                        bonus = 1;
+
+                    } else if (saida[2] == "galo" && saida[2] == saida[3] && saida[2] == saida[4]) {
+                        bonus = 1;
+
+                    }
+                }
+                //leao
+                okCeleiro = 0;
+                for (let index = 0; index < 5; index++) {
+                    if (saida[index] == "leao") {
+                        okCeleiro++;
+                    }
+                }
+
+                if (okCeleiro == 5) {
+                    premio += 2000;
+                    okCeleiro = 0;
+
+                } else {
+                    okCeleiro = 0;
+                    for (let index = 0; index < 4; index++) {
+                        if (saida[index] == "leao") {
+                            okCeleiro++;
+                        }
+
+                    }
+
+                    if (okCeleiro == 4) {
+                        bonus = 2;
+                        okCeleiro = 0;
+
+                    } else {
+                        if (saida[0] == "leao" && saida[0] == saida[1] && saida[0] == saida[2]) {
+                            bonus = 1;
+
+                        } else if (saida[2] == "leao" && saida[2] == saida[3] && saida[2] == saida[4]) {
+                            bonus = 1;
+
+                        } else if (saida[1] == "leao" && saida[1] == saida[2] && saida[1] == saida[3]) {
+                            bonus = 1;
+
+                        }
+                    }
+
+                }
+
+            }
+            function linha_2() {
+                //lebre
+                okLebre = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "lebre") {
+                        okLebre++;
+                    }
+                }
+
+                if (okLebre == 5) {
+                    premio += 30;
+                    okLebre = 0;
+
+                } else if (okLebre == 4) {
+                    premio += 2;
+                    okLebre = 0;
+
+                }
+
+                //gato
+                okGato = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                }
+
+                if (okGato == 5) {
+                    premio += 30;
+                    okGato = 0;
+
+                } else if (okGato == 4) {
+                    premio += 7;
+                    okGato = 0;
+
+                }
+                if (saida[5] == "gato" && saida[5] == saida[6] && saida[5] == saida[7]) {
+                    premio += 5;
+
+                } else if (saida[7] == "gato" && saida[7] == saida[8] && saida[7] == saida[9]) {
+                    premio += 5;
+
+                } else if (saida[6] == "gato" && saida[6] == saida[7] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+
+                //pavao
+                okPavao = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                }
+
+                if (okPavao == 5) {
+                    premio += 75;
+                    okPavao = 0;
+
+                } else if (okPavao == 4) {
+                    premio += 30;
+                    okPavao = 0;
+
+                }
+                if (saida[5] == "pavao" && saida[5] == saida[6] && saida[5] == saida[7]) {
+                    premio += 5;
+
+                } else if (saida[7] == "pavao" && saida[7] == saida[8] && saida[7] == saida[9]) {
+                    premio += 5;
+
+                } else if (saida[6] == "pavao" && saida[6] == saida[7] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+
+                //cao
+                okCao = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                }
+
+                if (okCao == 5) {
+                    premio += 150;
+                    okCao = 0;
+
+                } else if (okCao == 4) {
+                    premio += 100;
+                    okCao = 0;
+
+                }
+                if (saida[5] == "cao" && saida[5] == saida[6] && saida[5] == saida[7]) {
+                    premio += 7;
+
+                } else if (saida[7] == "cao" && saida[7] == saida[8] && saida[7] == saida[9]) {
+                    premio += 7;
+
+                } else if (saida[6] == "cao" && saida[6] == saida[7] && saida[6] == saida[8]) {
+                    premio += 7;
+
+                }
+
+                //zebra
+                okZebra = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                }
+
+                if (okZebra == 5) {
+                    premio += 200;
+                    okZebra = 0;
+
+                } else if (okZebra == 4) {
+                    premio += 50;
+                    okZebra = 0;
+
+                } else if (okZebra == 3) {
+                    premio += 10;
+                    okZebra = 0;
+
+                }
+
+                //galo
+                okCarroca = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "galo") {
+                        okCarroca++;
+                    }
+                }
+
+                if (okCarroca == 5) {
+                    bonus = 3;
+                    okCarroca = 0;
+
+                } else {
+                    if (saida[5] == "galo" && saida[5] == saida[6] && saida[5] == saida[7] && saida[5] == saida[8]) {
+                        bonus = 2;
+
+                    } else if (saida[6] == "galo" && saida[6] == saida[7] && saida[6] == saida[8] && saida[6] == saida[9]) {
+                        bonus = 2;
+
+                    } else if (saida[5] == "galo" && saida[5] == saida[6] && saida[5] == saida[7]) {
+                        bonus = 1;
+
+                    } else if (saida[7] == "galo" && saida[7] == saida[8] && saida[7] == saida[9]) {
+                        bonus = 1;
+
+                    }
+                }
+                //leao
+                okCeleiro = 0;
+                for (let index = 5; index < 10; index++) {
+                    if (saida[index] == "leao") {
+                        okCeleiro++;
+                    }
+                }
+
+                if (okCeleiro == 5) {
+                    premio += 2000;
+                    okCeleiro = 0;
+
+                } else {
+                    okCeleiro = 0;
+                    for (let index = 5; index < 9; index++) {
+                        if (saida[index] == "leao") {
+                            okCeleiro++;
+                        }
+
+                    }
+
+                    if (okCeleiro == 4) {
+                        bonus = 2;
+                        okCeleiro = 0;
+
+                    } else {
+                        if (saida[5] == "leao" && saida[5] == saida[6] && saida[5] == saida[7]) {
+                            bonus = 1;
+
+                        } else if (saida[7] == "leao" && saida[7] == saida[8] && saida[7] == saida[9]) {
+                            bonus = 1;
+
+                        } else if (saida[6] == "leao" && saida[6] == saida[7] && saida[6] == saida[8]) {
+                            bonus = 1;
+
+                        }
+                    }
+
+                }
+            }
+            function linha_3() {
+                //lebre
+                okLebre = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "lebre") {
+                        okLebre++;
+                    }
+                }
+
+                if (okLebre == 5) {
+                    premio += 30;
+                    okLebre = 0;
+
+                } else if (okLebre == 4) {
+                    premio += 2;
+                    okLebre = 0;
+
+                }
+                //gato
+                okGato = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "gato") {
+                        okGato++;
+                    }
+                }
+
+                if (okGato == 5) {
+                    premio += 30;
+                    okGato = 0;
+
+                } else if (okGato == 4) {
+                    premio += 7;
+                    okGato = 0;
+
+                }
+
+                if (saida[10] == "gato" && saida[10] == saida[11] && saida[10] == saida[12]) {
+                    premio += 5;
+
+                } else if (saida[12] == "gato" && saida[12] == saida[13] && saida[12] == saida[14]) {
+                    premio += 5;
+
+                } else if (saida[11] == "gato" && saida[11] == saida[12] && saida[11] == saida[13]) {
+                    premio += 2;
+
+                }
+                //pavao
+                okPavao = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "pavao") {
+                        okPavao++;
+                    }
+                }
+
+                if (okPavao == 5) {
+                    premio += 75;
+                    okPavao = 0;
+
+                } else if (okPavao == 4) {
+                    premio += 30;
+                    okPavao = 0;
+
+                }
+
+                if (saida[10] == "pavao" && saida[10] == saida[11] && saida[10] == saida[12]) {
+                    premio += 5;
+
+                } else if (saida[12] == "pavao" && saida[12] == saida[13] && saida[12] == saida[14]) {
+                    premio += 5;
+
+                } else if (saida[11] == "pavao" && saida[11] == saida[12] && saida[11] == saida[13]) {
+                    premio += 2;
+
+                }
+                //cao
+                okCao = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "cao") {
+                        okCao++;
+                    }
+                }
+
+                if (okCao == 5) {
+                    premio += 150;
+                    okCao = 0;
+
+                } else if (okCao == 4) {
+                    premio += 100;
+                    okCao = 0;
+
+                }
+
+                if (saida[10] == "cao" && saida[10] == saida[11] && saida[10] == saida[12]) {
+                    premio += 7;
+
+                } else if (saida[12] == "cao" && saida[12] == saida[13] && saida[12] == saida[14]) {
+                    premio += 7;
+
+                } else if (saida[11] == "cao" && saida[11] == saida[12] && saida[11] == saida[13]) {
+                    premio += 7;
+
+                }
+
+                //zebra
+                okZebra = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "zebra") {
+                        okZebra++;
+                    }
+                }
+
+                if (okZebra == 5) {
+                    premio += 200;
+                    okZebra = 0;
+
+                } else if (okZebra == 4) {
+                    premio += 50;
+                    okZebra = 0;
+
+                } else if (okZebra == 3) {
+                    premio += 10;
+                    okZebra = 0;
+
+                }
+
+                //galo
+                okCarroca = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "galo") {
+                        okCarroca++;
+                    }
+                }
+
+                if (okCarroca == 5) {
+                    bonus = 3;
+                    okCarroca = 0;
+
+                } else {
+                    if (saida[10] == "galo" && saida[10] == saida[11] && saida[10] == saida[12] && saida[10] == saida[13]) {
+                        bonus = 2;
+
+                    } else if (saida[11] == "galo" && saida[11] == saida[12] && saida[11] == saida[13] && saida[11] == saida[14]) {
+                        bonus = 2;
+
+                    } else if (saida[10] == "galo" && saida[10] == saida[11] && saida[10] == saida[12]) {
+                        bonus = 1;
+
+                    } else if (saida[12] == "galo" && saida[12] == saida[13] && saida[12] == saida[14]) {
+                        bonus = 1;
+
+                    }
+                }
+                //leao
+                okCeleiro = 0;
+                for (let index = 10; index < 15; index++) {
+                    if (saida[index] == "leao") {
+                        okCeleiro++;
+                    }
+                }
+
+                if (okCeleiro == 5) {
+                    premio += 2000;
+                    okCeleiro = 0;
+
+                } else {
+                    okCeleiro = 0;
+                    for (let index = 10; index < 14; index++) {
+                        if (saida[index] == "leao") {
+                            okCeleiro++;
+                        }
+
+                    }
+
+                    if (okCeleiro == 4) {
+                        bonus = 2;
+                        okCeleiro = 0;
+
+                    } else {
+                        if (saida[10] == "leao" && saida[10] == saida[11] && saida[10] == saida[12]) {
+                            bonus = 1;
+
+                        } else if (saida[12] == "leao" && saida[12] == saida[13] && saida[12] == saida[14]) {
+                            bonus = 1;
+
+                        } else if (saida[11] == "leao" && saida[11] == saida[12] && saida[11] == saida[13]) {
+                            bonus = 1;
+
+                        }
+                    }
+
+                }
+            }
+            function linha_4() {
+                //lebre
+                if (saida[0] == "lebre" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 30;
+
+                } else if (saida[0] == "lebre" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
+                    || saida[4] == "lebre" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "lebre" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
+                    || saida[8] == "lebre" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[12] == "lebre" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                    premio += 2;
+                }
+                //gato
+                if (saida[0] == "gato" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 30;
+
+                } else if (saida[0] == "gato" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
+                    || saida[4] == "gato" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "gato" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
+                    || saida[8] == "gato" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[12] == "gato" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                    premio += 7;
+                }
+                if (saida[0] == "gato" && saida[0] == saida[6] && saida[0] == saida[12]) {
+                    premio += 5;
+                } else if (saida[12] == "gato" && saida[12] == saida[8] && saida[12] == saida[4]) {
+                    premio += 5;
+
+                } else if (saida[6] == "gato" && saida[6] == saida[12] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+                //pavao
+                if (saida[0] == "pavao" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 75;
+
+                } else if (saida[0] == "pavao" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
+                    || saida[4] == "pavao" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "pavao" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
+                    || saida[8] == "pavao" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[12] == "pavao" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                    premio += 30;
+                }
+                if (saida[0] == "pavao" && saida[0] == saida[6] && saida[0] == saida[12]) {
+                    premio += 5;
+                } else if (saida[12] == "pavao" && saida[12] == saida[8] && saida[12] == saida[4]) {
+                    premio += 5;
+
+                } else if (saida[6] == "pavao" && saida[6] == saida[12] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+                //cao
+                if (saida[0] == "cao" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 150;
+
+                } else if (saida[0] == "cao" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
+                    || saida[4] == "cao" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "cao" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
+                    || saida[8] == "cao" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[12] == "cao" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                    premio += 100;
+                }
+                if (saida[0] == "cao" && saida[0] == saida[6] && saida[0] == saida[12]) {
+                    premio += 7;
+                } else if (saida[12] == "cao" && saida[12] == saida[8] && saida[12] == saida[4]) {
+                    premio += 7;
+
+                } else if (saida[6] == "cao" && saida[6] == saida[12] && saida[6] == saida[8]) {
+                    premio += 7;
+
+                }
+
+                //zebra
+                if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 200;
+
+                } else if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6] && saida[0] == saida[8]
+                    || saida[4] == "zebra" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "zebra" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]
+                    || saida[8] == "zebra" && saida[8] == saida[12] && saida[8] == saida[0] && saida[8] == saida[6]
+                    || saida[12] == "zebra" && saida[12] == saida[0] && saida[12] == saida[4] && saida[12] == saida[6]) {
+                    premio += 50;
+
+                } else if (saida[0] == "zebra" && saida[0] == saida[4] && saida[0] == saida[6]
+                    || saida[4] == "zebra" && saida[4] == saida[6] && saida[4] == saida[8]
+                    || saida[6] == "zebra" && saida[6] == saida[8] && saida[6] == saida[12]
+                    || saida[8] == "zebra" && saida[8] == saida[12] && saida[8] == saida[0]
+                    || saida[12] == "zebra" && saida[12] == saida[0] && saida[12] == saida[4]) {
+                    premio += 10;
+
+                }
+
+                //galo
+                if (saida[0] == "galo" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    bonus = 3;
+
+                } else if (saida[4] == "galo" && saida[4] == saida[6] && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "galo" && saida[6] == saida[8] && saida[6] == saida[12] && saida[6] == saida[0]) {
+                    bonus = 2;
+
+                } else if (saida[6] == "galo" && saida[6] == saida[8] && saida[6] == saida[12]
+                    || saida[8] == "galo" && saida[8] == saida[12] && saida[8] == saida[4]
+                    || saida[12] == "galo" && saida[12] == saida[0] && saida[12] == saida[6]) {
+                    bonus = 1;
+
+                }
+
+                //leao
+                if (saida[0] == "leao" && saida[0] == saida[4] && saida[0] == saida[6]
+                    && saida[0] == saida[8] && saida[0] == saida[12]) {
+                    premio += 2000;
+
+                } else if (saida[0] == "leao" && saida[0] == saida[6] && saida[0] == saida[12] && saida[0] == saida[8]) {
+                    bonus = 2;
+
+                } else if (saida[4] == "leao" && saida[4] == saida[8] && saida[4] == saida[12]
+                    || saida[6] == "leao" && saida[6] == saida[8] && saida[6] == saida[12]) {
+                    bonus = 1;
+
+                }
+                //[0][x][x][x][4]
+                //[x][6][x][8][x]
+                //[x][x][12][x][x]
+
+            }
+            function linha_5() {
+                //lebre
+                if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 30;
+
+                } else if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[6] == "lebre" && saida[6] == saida[8] && saida[6] == saida[10] && saida[6] == saida[14]
+                    || saida[8] == "lebre" && saida[8] == saida[10] && saida[8] == saida[14] && saida[8] == saida[2]
+                    || saida[10] == "lebre" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
+                    || saida[14] == "lebre" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
+                    premio += 2;
+                }
+                //gato
+                if (saida[2] == "gato" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 30;
+
+                } else if (saida[2] == "gato" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[6] == "gato" && saida[6] == saida[8] && saida[6] == saida[10] && saida[6] == saida[14]
+                    || saida[8] == "gato" && saida[8] == saida[10] && saida[8] == saida[14] && saida[8] == saida[2]
+                    || saida[10] == "gato" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
+                    || saida[14] == "gato" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
+                    premio += 7;
+                }
+
+                if (saida[10] == "gato" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                    premio += 5;
+                } else if (saida[2] == "gato" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    premio += 5;
+
+                } else if (saida[6] == "gato" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+                //pavao
+                if (saida[2] == "pavao" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 75;
+
+                } else if (saida[2] == "pavao" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[6] == "pavao" && saida[6] == saida[8] && saida[6] == saida[10] && saida[6] == saida[14]
+                    || saida[8] == "pavao" && saida[8] == saida[10] && saida[8] == saida[14] && saida[8] == saida[2]
+                    || saida[10] == "pavao" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
+                    || saida[14] == "pavao" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
+                    premio += 30;
+                }
+
+                if (saida[10] == "pavao" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                    premio += 5;
+                } else if (saida[2] == "pavao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    premio += 5;
+
+                } else if (saida[6] == "pavao" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                    premio += 2;
+
+                }
+                //cao
+                if (saida[2] == "cao" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 150;
+
+                } else if (saida[2] == "cao" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[6] == "cao" && saida[6] == saida[8] && saida[6] == saida[10] && saida[6] == saida[14]
+                    || saida[8] == "cao" && saida[8] == saida[10] && saida[8] == saida[14] && saida[8] == saida[2]
+                    || saida[10] == "cao" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
+                    || saida[14] == "cao" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
+                    premio += 100;
+                }
+
+                if (saida[10] == "cao" && saida[10] == saida[6] && saida[10] == saida[2]) {
+                    premio += 7;
+                } else if (saida[2] == "cao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    premio += 7;
+
+                } else if (saida[6] == "cao" && saida[6] == saida[2] && saida[6] == saida[8]) {
+                    premio += 7;
+
+                }
+
+                //zebra
+                if (saida[2] == "zebra" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 200;
+
+                } else if (saida[2] == "zebra" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[6] == "zebra" && saida[6] == saida[8] && saida[6] == saida[10] && saida[6] == saida[14]
+                    || saida[8] == "zebra" && saida[8] == saida[10] && saida[8] == saida[14] && saida[8] == saida[2]
+                    || saida[10] == "zebra" && saida[10] == saida[14] && saida[10] == saida[2] && saida[10] == saida[6]
+                    || saida[14] == "zebra" && saida[14] == saida[2] && saida[14] == saida[6] && saida[14] == saida[8]) {
+                    premio += 50;
+
+                } else if (saida[2] == "zebra" && saida[2] == saida[6] && saida[2] == saida[8]
+                    || saida[6] == "zebra" && saida[6] == saida[8] && saida[6] == saida[10]
+                    || saida[8] == "zebra" && saida[8] == saida[10] && saida[8] == saida[14]
+                    || saida[10] == "zebra" && saida[10] == saida[14] && saida[10] == saida[2]
+                    || saida[14] == "zebra" && saida[14] == saida[2] && saida[14] == saida[6]) {
+                    premio += 10;
+                }
+
+                //galo
+                if (saida[2] == "galo" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    bonus = 3;
+
+                } else if (saida[2] == "galo" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]
+                    || saida[2] == "galo" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    bonus = 2;
+
+                } else if (saida[2] == "galo" && saida[2] == saida[6] && saida[2] == saida[10]
+                    || saida[2] == "galo" && saida[2] == saida[6] && saida[2] == saida[8]
+                    || saida[2] == "galo" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    bonus = 1;
+
+                }
+                //leao
+                if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[8]
+                    && saida[2] == saida[10] && saida[2] == saida[14]) {
+                    premio += 2000;
+
+                } else if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[8] && saida[2] == saida[10]) {
+                    bonus = 2;
+
+                } else if (saida[2] == "leao" && saida[2] == saida[6] && saida[2] == saida[10]
+                    || saida[2] == "leao" && saida[2] == saida[8] && saida[2] == saida[14]) {
+                    bonus = 1;
+
+                }
+                //[x][x][2][x][x]
+                //[x][6][x][8][x]
+                //[10][x][x][x][14]
+            }
+
+            document.getElementById('premio').innerHTML = premio;
+
+            console.log("linha 1");
+            for (let index = 0; index < 5; index++) {
+                console.log(index + " " + saida[index]);
+
+            }
+
+            console.log("linha 2");
+            for (let index = 5; index < 10; index++) {
+                console.log(index + " " + saida[index]);
+
+            }
+
+            console.log("linha 3");
+            for (let index = 10; index < 15; index++) {
+                console.log(index + " " + saida[index]);
+
+            }
+        }
+
     </script>
 
     <style>
@@ -824,8 +1057,8 @@
             background-image: url("./img/background.jpeg");
             background-position: center;
             text-align: center;
-            font-family: fantasy;
-
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            font-size: large;
         }
 
         @media only screen and (min-width: 1366px) {}
@@ -841,26 +1074,29 @@
         }
 
         .bicho {
-            width: 35px;
-            height: 35px;
+            width: 25px;
+            height: 25px;
             border-radius: 20px;
+            border: 1px solid white;
         }
 
         .creditos,
         .premios,
         .apostas,
         .bonusBichos {
-            border: 6px solid white;
+            border: 4px solid white;
             border-radius: 8px;
-            background-color: orange;
-            width: 200px;
+            background-color: black;
+            width: 160px;
             height: 40px;
             text-align: start;
-            color: blue;
+            color: greenyellow;
+            margin-left: 5px;
         }
 
         .linha {
             display: inline-flex;
+
         }
 
         .img_1,
@@ -879,43 +1115,31 @@
         .img_14,
         .img_15 {
             border-radius: 12px;
-            width: 90px;
-            height: 90px;
+            width: 70px;
+            height: 70px;
             margin: 10px;
-            box-shadow: 10px 8px 5px 0 black, 10px 10px 10px 0 gray;
+            box-shadow: 10px 8px 5px 0 rgb(48, 78, 247), 10px 10px 10px 0 white;
         }
 
         button {
-            width: 100px;
-            height: 40px;
+            width: 120px;
+            height: 35px;
             border-radius: 5px;
             margin-top: 20px;
             font-family: fantasy;
+            background-color: black;
+            color: greenyellow;
+            font-size: medium;
         }
 
         button:hover {
             background-color: deepskyblue;
             text-transform: uppercase;
+            color: black;
         }
-
-        #btnApostaD:hover,
-        #btnApostaT:hover {
-            background-color: yellow;
-        }
-
-        #btnApostaT:hover {
-            background-color: aqua;
-        }
-
 
         #btnDepositar:hover {
             background-color: aquamarine;
-            text-transform: uppercase;
-
-        }
-
-        #btnParar:hover {
-            background-color: red;
             text-transform: uppercase;
 
         }
@@ -926,15 +1150,15 @@
     <div class="janela">
         <div class="placar">
             <div class="creditos">
-                <p>Créditos <span id="dinheiro"></span></p>
+                <p>Créditos: <span id="dinheiro"></span></p>
             </div>
 
             <div class="premios">
-                <p>Premio <span id="premio"></span></p>
+                <p>Premio: <span id="premio">0</span></p>
             </div>
 
             <div class="apostas">
-                <p>Aposta <span id="apostas">1</span></p>
+                <p>Aposta: <span id="apostas">1</span></p>
                 <p><span id="contador">1</span></p>
             </div>
         </div>
@@ -946,7 +1170,7 @@
 
                     <img class="img_2" id="img_2" src="./img/aguia.png">
 
-                    <img class="img_3" id="img_3" src="./img/cavalo.png">
+                    <img class="img_3" id="img_3" src="./img/galo.png">
 
                     <img class="img_4" id="img_4" src="./img/cao.png">
 
@@ -972,7 +1196,7 @@
                 <div class="linha">
                     <img class="img_11" id="img_11" src="./img/tigre.png">
 
-                    <img class="img_12" id="img_12" src="./img/gato.png">
+                    <img class="img_12" id="img_12" src="./img/zebra.png">
 
                     <img class="img_13" id="img_13" src="./img/cao.png">
 
@@ -982,6 +1206,7 @@
                 </div>
             </div>
         </div>
+
         <div class="bonus">
             <div class="bonusBichos"><span id="bonusTrigre">00,00</span>
                 <div class="grupoTigres">
@@ -1009,10 +1234,17 @@
                     <img class="bicho" src="./img/tigre.png">
                 </div>
             </div>
+            <div class="bonusBichos">
+                <span id="bonus">0</span>
+                <div class="saidaBonus">
+                    <img class="bicho" src="./img/galo.png">
+                </div>
+            </div>
         </div>
+
         <div id="controles">
-            <button id="btnAutomatico" value="true" onclick="javascript:jogar('true')"><span id="btnAutoText">AUTO
-                    OFF</span></button>
+            <button id="btnAutomatico" value="true" onclick="javascript:jogar('true')">
+                <span id="btnAutoText">AUTO OFF</span></button>
             <button id="btnJogar" value="false" onclick="javascript:jogar('false')">JOGAR</button>
             <button id="btnDepositar" onclick="javascript:depositar()">DEPOSITAR</button>
             <button id="btnAposta" onclick="javascript:almentarAposta()">APOSTA</button>
