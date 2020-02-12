@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jogo roleta</title>
+
+    <script>
+        dir = "./img/";
+
+        dinheiro = 0;
+        aposta = 10;
+        premio = 0;
+        maior = 0;
+
+        imagens = ['tigre',  'aguia', 'cao', 'gato',
+            'zebra', 'lebre', 'cobra', 'pavao', 'cavalo', 'galo'];
+        elemento = ['img_1', 'img_2', 'img_3', 'img_4', 'img_5', 'img_6', 'img_7', 'img_8',
+            'img_9', 'img_10', 'img_11', 'img_12'];
+        saida = [];
+
+        posicaoImagens = 0;
+        posicaoElemento = 0;
+
+        jogou = false;
+
+        let context,
+            oscillator,
+            type = 'triangle';
+
+        function start() {
+            context = new AudioContext();
+            oscillator = context.createOscillator();
+
+            oscillator.type = type;
+            oscillator.connect(context.destination);
+            oscillator.start();
+        }
+
+        function stop() {
+            oscillator.stop();
+        }
+
+        function multiplicar(valor) {
+            novoValor = aposta * valor;
+
+            if (novoValor <= dinheiro) {
+                document.getElementById('apostas').innerHTML = ' X ' + valor;
+                setAposta(aposta);
+            }
+        }
+
+        function rodar() {
+            jogou = true;
+            desabilitaBotoes();
+            if (dinheiro != 0) {
+                cont = 0;
+                dinheiro -= aposta;
+
+                if (dinheiro < aposta && dinheiro != 0) {
+                    setAposta(dinheiro);
+                }
+
+                processarDinheiro();
+                setTimeout(t = setInterval(randomImagens, 3), 2000);
+                parar();
+            }
+        }
+
+        function randomImagens() {
+            posicaoElemento = Math.floor(Math.random() * elemento.length);
+            posicaoImagens = Math.floor(Math.random() * imagens.length);
+            img = document.getElementById(elemento[posicaoElemento]);
+            img.src = dir + imagens[posicaoImagens] + '.png';
+        }
+
+        function parar() {
+            setTimeout(() => {
+                clearInterval(t);
+
+                pegarImagem();
+
+                habilitaBotoes();
+
+            }, 3000);
+        }
+
+        function pegarImagem() {
+            tigre = 0; leao = 0; vaca = 0; aguia = 0; veado = 0; cao = 0; gato = 0; urco = 0;
+            zebra = 0; lebre = 0; cobra = 0; pavao = 0; jacare = 0; cavalo = 0; touro = 0; porco = 0; galo = 0;
+
+            for (let index = 0; index < elemento.length; index++) {
+                v = Math.floor(Math.random() * imagens.length);
+                var img = document.getElementById(elemento[cont]);
+                img.src = dir + imagens[v] + '.png';
+
+                saida[index] = imagens[v];
+
+                switch (saida[index]) {
+                    case 'tigre':
+                        tigre++;
+                        break;
+                    case 'leao':
+                        leao++;
+                        break;
+                    case 'vaca':
+                        vaca++;
+                        break;
+                    case 'aguia':
+                        aguia++;
+                        break;
+                    case 'veado':
+                        veado++;
+                        break;
+                    case 'cao':
+                        cao++;
+                        break;
+                    case 'gato':
+                        gato++;
+                        break;
+                    case 'urco':
+                        urco++;
+                        break;
+                    case 'zebra':
+                        zebra++;
+                        break;
+                    case 'lebre':
+                        lebre++;
+                        break;
+                    case 'cobra':
+                        cobra++;
+                        break;
+                    case 'pavao':
+                        pavao++;
+                        break;
+                    case 'jacare':
+                        jacare++;
+                        break;
+                    case 'cavalo':
+                        cavalo++;
+                        break;
+                    case 'touro':
+                        touro++;
+                        break;
+                    case 'porco':
+                        porco++;
+                        break;
+                    case 'galo':
+                        galo++;
+                        break;
+                }
+
+                cont++;
+            }
+            calcularPremio();
+
+            console.log('tigre: ' + tigre, 'leao: ' + leao, 'vaca: ' + vaca, 'aguia: ' + aguia, 'veado: ' + veado,
+                'cao: ' + cao, 'gato:' + gato, 'urco: ' + urco, 'zebra: ' + zebra, 'lebre: ' + lebre,
+                'cobra: ' + cobra, 'pavao: ' + pavao, 'jacare: ' + jacare, 'cavalo: ' + cavalo,
+                'touro: ' + touro, 'porco: ' + porco, 'galo: ' + galo + 'Maior: ' + maior);
+        }
+
+        function calcularPremio() {
+            if (tigre == 3 || leao == 3 || vaca == 3 || aguia == 3 || veado == 3
+                || cao == 3 || gato == 3 || urco == 3 || zebra == 3 || lebre == 3
+                || cobra == 3, pavao == 3, jacare == 3, cavalo == 3, touro == 3, porco == 3, galo == 3) {
+                premio = aposta * 3;
+                dinheiro += premio;
+                processarDinheiro();
+                premio = 0;
+
+            } else if (tigre == 4 || leao == 4 || vaca == 4 || aguia == 4 || veado == 4
+                || cao == 4 || gato == 4 || urco == 4 || zebra == 4 || lebre == 4
+                || cobra == 4, pavao == 4, jacare == 4, cavalo == 4, touro == 4, porco == 4, galo == 4) {
+                premio = aposta * 4;
+                dinheiro += premio;
+                processarDinheiro();
+                premio = 0;
+
+            } else if (tigre == 5 || leao == 5 || vaca == 5 || aguia == 5 || veado == 5
+                || cao == 5 || gato == 5 || urco == 5 || zebra == 5 || lebre == 5
+                || cobra == 5, pavao == 5, jacare == 5, cavalo == 5, touro == 5, porco == 5, galo == 5) {
+                premio = aposta * 5;
+                dinheiro += premio;
+                processarDinheiro();
+                premio = 0;
+
+            } else if (tigre == 6 || leao == 6 || vaca == 6 || aguia == 6 || veado == 6
+                || cao == 6 || gato == 6 || urco == 6 || zebra == 6 || lebre == 6
+                || cobra == 6, pavao == 6, jacare == 6, cavalo == 6, touro == 6, porco == 6, galo == 6) {
+                premio = aposta * 6;
+                dinheiro += premio;
+                processarDinheiro();
+                premio = 0;
+
+            }
+        }
+
+        function processarDinheiro() {
+            document.getElementById('dinheiro').innerHTML = dinheiro.toFixed(2).replace(".", ",");
+        }
+
+        function setAposta(valorAposta) {
+            if (valorAposta <= dinheiro) {
+                aposta = valorAposta;
+                document.getElementById('apostas').innerHTML = aposta.toFixed(2).replace(".", ",");
+            }
+        }
+
+        function depositar() {
+            dinheiro += 500;
+            aposta = 10;
+
+            document.getElementById('apostas').innerHTML = aposta.toFixed(2).replace(".", ",");
+            document.getElementById('dinheiro').innerHTML = dinheiro.toFixed(2).replace(".", ",");
+        }
+
+        function desabilitaBotoes() {
+            botaoJogar = document.getElementById('btnJogar').value;
+
+            if (botaoJogar) {
+                document.getElementById('btnJogar').disabled = true;
+                document.getElementById('btnDepositar').disabled = true;
+                document.getElementById('btnAposta1').disabled = true;
+                document.getElementById('btnAposta5').disabled = true;
+                document.getElementById('btnAposta10').disabled = true;
+                document.getElementById('btnAposta15').disabled = true;
+                document.getElementById('btnAposta2').disabled = true;
+                document.getElementById('btnAposta50').disabled = true;
+                document.getElementById('btnAposta6').disabled = true;
+                document.getElementById('btnAposta7').disabled = true;
+                document.getElementById('btnAposta8').disabled = true;
+                document.getElementById('btnAposta9').disabled = true;
+                document.getElementById('btnApostaD').disabled = true;
+                document.getElementById('btnApostaT').disabled = true;
+
+            }
+        }
+
+        function habilitaBotoes() {
+            document.getElementById('btnJogar').disabled = false;
+            document.getElementById('btnDepositar').disabled = false;
+            document.getElementById('btnAposta1').disabled = false;
+            document.getElementById('btnAposta5').disabled = false;
+            document.getElementById('btnAposta10').disabled = false;
+            document.getElementById('btnAposta15').disabled = false;
+            document.getElementById('btnAposta2').disabled = false;
+            document.getElementById('btnAposta50').disabled = false;
+            document.getElementById('btnAposta6').disabled = false;
+            document.getElementById('btnAposta7').disabled = false;
+            document.getElementById('btnAposta8').disabled = false;
+            document.getElementById('btnAposta9').disabled = false;
+            document.getElementById('btnApostaD').disabled = false;
+            document.getElementById('btnApostaT').disabled = false;
+        }
+
+    </script>
+
+    <style>
+        body {
+            background-image: url("./img/background.jpeg");
+            background-position: center;
+            color: white;
+            text-align: center;
+        }
+
+        @media only screen and (min-width: 1366px) {
+            .grupos {
+                display: inline-flex;
+            }
+
+        }
+
+        img {
+            width: 90px;
+            height: 90px;
+            margin: 10px;
+            box-shadow: 10px 8px 5px 0 black, 10px 10px 10px 0 gray;
+        }
+
+        button {
+            width: 100px;
+            height: 40px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        #btnApostaD:hover,
+        #btnApostaT:hover {
+            background-color: yellow;
+            text-transform: uppercase;
+        }
+
+        #btnJogar:hover {
+            background-color: deepskyblue;
+            text-transform: uppercase;
+        }
+
+        #btnDepositar:hover {
+            background-color: aquamarine;
+            text-transform: uppercase;
+
+        }
+
+        #btnParar:hover {
+            background-color: red;
+            text-transform: uppercase;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="janela">
+        <div class="placar">
+            <p>Total R$ <span id="dinheiro"></span></p>
+            <p>Apostando R$ <span id="apostas"></span></p>
+        </div>
+
+        <div class="grupos">
+            <div class="grupo1">
+                <img id="img_1" src="./img/aguia.png">
+
+                <img id="img_2" src="./img/lebre.png">
+
+                <img id="img_3" src="./img/cao.png">
+
+                <img id="img_4" src="./img/zebra.png">
+            </div>
+
+            <div class="grupo2">
+                <img id="img_5" src="./img/cobra.png">
+
+                <img id="img_6" src="./img/gato.png">
+
+                <img id="img_7" src="./img/galo.png">
+
+                <img id="img_8" src="./img/cobra.png">
+            </div>
+
+            <div class="grupo3">
+                <img id="img_9" src="./img/galo.png">
+
+                <img id="img_10" src="./img/tigre.png">
+
+                <img id="img_11" src="./img/cavalo.png">
+
+                <img id="img_12" src="./img/lebre.png">
+            </div>
+        </div>
+
+        <div id="controles">
+            <button id="btnJogar" value="true" onclick="javascript:rodar()">Jogar</button>
+            <button id="btnDepositar" onclick="javascript:depositar()">Depositar</button>
+            <button id="btnParar" value="true" onclick="javascript:parar()">Parar</button>
+
+            <p>Apostas</p>
+
+            <div id="panelApostas">
+                <button id="btnAposta1" onclick="javascript:setAposta(10)">1</button>
+                <button id="btnAposta5" onclick="javascript:setAposta(50)">5</button>
+                <button id="btnAposta10" onclick="javascript:setAposta(100)">10</button>
+                <button id="btnAposta15" onclick="javascript:setAposta(150)">15</button>
+                <button id="btnAposta2" onclick="javascript:setAposta(200)">20</button>
+                <button id="btnAposta50" onclick="javascript:setAposta(500)">50</button>
+                <button id="btnAposta6" onclick="javascript:setAposta(600)">60</button>
+                <button id="btnAposta7" onclick="javascript:setAposta(700)">70</button>
+                <button id="btnAposta8" onclick="javascript:setAposta(800)">80</button>
+                <button id="btnAposta9" onclick="javascript:setAposta(900)">90</button>
+                <button id="btnApostaD" onclick="javascript:multiplicar(2)">Dobrar</button>
+                <button id="btnApostaT" onclick="javascript:multiplicar(3)">Triplicar</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
