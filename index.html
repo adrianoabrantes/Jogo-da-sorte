@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Cassino</title>
+    <title>Vegas Cassino village</title>
 
     <script>
-        dir = "./img/";
+        dir = "./img2/";
 
         dinheiro = 0;
         premio = 0;
@@ -26,10 +26,10 @@
         var a;
         var t;
 
-        imagens = ['lebre', 'gato', 'cao', 'pavao', 'zebra', 'tigre', 'galo', 'cavalo', 'cobra', 'aguia'];
+        imagens = ['lebre', 'gato', 'cao', 'pavao', 'zebra', 'tigre', 'galo', 'galo', 'cavalo', 'cobra', 'aguia'];
 
-        elemento = ['img_1', 'img_2', 'img_3', 'img_4', 'img_5', 'img_6', 'img_7', 'img_8',
-            'img_9', 'img_10', 'img_11', 'img_12', 'img_13', 'img_14', 'img_15'];
+        elemento = ['img0', 'img1', 'img2', 'img3', 'img4', 'img5', 'img6', 'img7',
+            'img8', 'img9', 'img10', 'img11', 'img12', 'img13', 'img14'];
 
         saida = [];
 
@@ -52,9 +52,9 @@
                 acumuladoBonusTigre2++;
                 contJogada = 0;
             }
-            document.getElementById('acumuladoBonusTigre1').innerHTML = acumuladoBonusTigre1.toFixed(2).replace(".", ",");
-            document.getElementById('acumuladoBonusAguia').innerHTML = acumuladoBonusAguia.toFixed(2).replace(".", ",");
-            document.getElementById('acumuladoBonusTigre2').innerHTML = acumuladoBonusTigre2.toFixed(2).replace(".", ",");
+            document.getElementById('acumuladoBonus1').innerHTML = acumuladoBonusTigre1.toFixed(2).replace(".", ",");
+            document.getElementById('acumuladoBonus2').innerHTML = acumuladoBonusAguia.toFixed(2).replace(".", ",");
+            document.getElementById('acumuladoBonus3').innerHTML = acumuladoBonusTigre2.toFixed(2).replace(".", ",");
         }
 
         function jogar(auto) {
@@ -85,7 +85,7 @@
             if (bonus > 0) {
                 clearInterval(a);
                 clearInterval(t);
-                mostrarJogo_2(true);
+                mostrarJogoBonus1(true);
 
             } else {
                 if (premio != 0) {
@@ -98,7 +98,7 @@
                 }
 
                 if (dinheiro > 0 && dinheiro >= apostas) {
-                    document.getElementById('grupos').style.filter = "blur(5px)";
+                    document.getElementById('jogoPrincipal').style.filter = "blur(5px)";
                     desabilitaBotoes(null);
                     cont = 0;
                     audio.fadeOut = true;
@@ -130,7 +130,7 @@
             setTimeout(() => {
                 clearInterval(t);
                 pegarImagem();
-                document.getElementById('grupos').style.filter = "blur(0px)";
+                document.getElementById('jogoPrincipal').style.filter = "blur(0px)";
                 habilitaBotoes();
             }, 3000);
         }
@@ -204,12 +204,12 @@
             }
 
             if (botao != null) {
-                botaoJogo_2 = document.getElementById(botao).value;
-                document.getElementById('btnJogo_1').disabled = true;
-                document.getElementById('btnJogo_2').disabled = true;
-                document.getElementById('btnJogo_3').disabled = true;
-                document.getElementById('btnJogo_4').disabled = true;
-                document.getElementById('btnJogo_5').disabled = true;
+                botaoBonus1 = document.getElementById(botao).value;
+                document.getElementById('btn1Bonus1').disabled = true;
+                document.getElementById('btn2Bonus1').disabled = true;
+                document.getElementById('btn3Bonus1').disabled = true;
+                document.getElementById('btn4Bonus1').disabled = true;
+                document.getElementById('btn5Bonus1').disabled = true;
 
             }
         }
@@ -221,11 +221,11 @@
             document.getElementById('btnAutomatico').disabled = false;
             document.getElementById('btnLinhas').disabled = false;
 
-            document.getElementById('btnJogo_1').disabled = false;
-            document.getElementById('btnJogo_2').disabled = false;
-            document.getElementById('btnJogo_3').disabled = false;
-            document.getElementById('btnJogo_4').disabled = false;
-            document.getElementById('btnJogo_5').disabled = false;
+            document.getElementById('btn1Bonus1').disabled = false;
+            document.getElementById('btn2Bonus1').disabled = false;
+            document.getElementById('btn3Bonus1').disabled = false;
+            document.getElementById('btn4Bonus1').disabled = false;
+            document.getElementById('btn5Bonus1').disabled = false;
 
         }
 
@@ -247,8 +247,8 @@
                     break;
             }
 
-            function linha_1() {
-                //depois renomear para linha_2
+            function linha_2() {
+                //depois renomear para linha_2 ok
                 okLebre = 0;
                 okGato = 0;
                 okCao = 0;
@@ -439,7 +439,8 @@
                 }
                 okAguia = 0;
             }
-            function linha_2() {
+
+            function linha_1() {
                 okLebre = 0;
                 okGato = 0;
                 okCao = 0;
@@ -628,8 +629,8 @@
 
                 }
                 okAguia = 0;
-
             }
+
             function linha_3() {
                 okLebre = 0;
                 okGato = 0;
@@ -818,8 +819,8 @@
 
                 }
                 okAguia = 0;
-
             }
+
             function linha_4() {
                 //lebre
                 if (saida[0] == "lebre" && saida[0] == saida[6] && saida[0] == saida[12]
@@ -1017,8 +1018,8 @@
                 //[0][x][x][x][4]
                 //[x][6][x][8][x]
                 //[x][x][12][x][x]
-
             }
+
             function linha_5() {
                 //lebre
                 if (saida[2] == "lebre" && saida[2] == saida[6] && saida[2] == saida[8]
@@ -1185,22 +1186,63 @@
             document.getElementById('premio').innerHTML = premio;
             document.getElementById('bonus').innerHTML = bonus;
             document.getElementById('premioPago').innerHTML = premioPago;
+
+            console.log("linha 1");
+            for (let index = 5; index < 10; index++) {
+                console.log(index + " " + saida[index]);
+            }
+            console.log("linha 2");
+            for (let index = 0; index < 5; index++) {
+                console.log(index + " " + saida[index]);
+            }
+            console.log("linha 3");
+            for (let index = 10; index < 15; index++) {
+                console.log(index + " " + saida[index]);
+            }
+
+            //[x][x][2][x][x]
+            //[x][6][x][8][x]
+            //[10][x][x][x][14]
+            console.log("linha 4");
+            console.log(10 + " " + saida[10]);
+            console.log(6 + " " + saida[6]);
+            console.log(2 + " " + saida[2]);
+            console.log(8 + " " + saida[8]);
+            console.log(14 + " " + saida[14]);
+
+            console.log("linha 5");
+            console.log(1 + " " + saida[1]);
+            console.log(6 + " " + saida[6]);
+            console.log(12 + " " + saida[12]);
+            console.log(8 + " " + saida[8]);
+            console.log(4 + " " + saida[4]);
+
         }
 
-        function mostrarJogo_2(premio) {
+        function mostrarJogoBonus1(premio) {
             if (premio) {
-                document.getElementById('jogo_1').style.display = 'none';
-                document.getElementById('jogo_2').style.display = 'block';
+                document.getElementById('jogoPrincipal').style.display = 'none';
+                document.getElementById('placar2').style.display = 'none';
+                document.getElementById('placar3').style.display = 'none';
+                document.getElementById('botoes').style.display = 'none';
+
+                document.getElementById('placarBonus1').style.display = 'block';
+                document.getElementById('jogoBonus1').style.display = 'block';
                 document.getElementById('bonus').style.display = bonus;
 
             } else {
-                document.getElementById('jogo_1').style.display = 'block';
-                document.getElementById('jogo_2').style.display = 'none';
+                document.getElementById('jogoPrincipal').style.display = 'block';
+                document.getElementById('placar2').style.display = 'block';
+                document.getElementById('placar3').style.display = 'block';
+                document.getElementById('botoes').style.display = 'block';
+
+                document.getElementById('placarBonus1').style.display = 'none';
+                document.getElementById('jogoBonus1').style.display = 'none';
 
             }
         }
 
-        function animacaoJogo_2(botao) {
+        function animacaoJogoBonus1(botao) {
             desabilitaBotoes(botao);
 
             audio.fadeOut = true;
@@ -1212,7 +1254,7 @@
             setTimeout(() => {
                 clearInterval(tempo);
                 setTimeout(() => {
-                    mostrarJogo_2(false);
+                    mostrarJogoBonus1(false);
                     premio += premioBonus;
                     bonus = 0;
                     premioBonus = 0;
@@ -1237,294 +1279,263 @@
     </script>
 
     <style>
-        @media only screen and (min-width: 1366px) {}
-
         body {
-            background-image: url("./img/background.jpeg");
-            background-position: bottom;
-            text-align: center;
-        }
-
-        table {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .celula {
-            width: 170px;
-        }
-
-        @keyframes example {
-            0% {
-                background-color: red;
-                left: 0px;
-                top: 0px;
-            }
-
-            25% {
-                background-color: yellow;
-                left: 200px;
-                top: 0px;
-            }
-        }
-
-        .bonus,
-        .placar {
             background-color: black;
-            width: 100%;
-            color: aqua;
-            padding: 10px;
+            color: white;
         }
 
-        .bonus {
-            height: 300px;
+        @media only screen and (min-width: 400px) {
+            .icone {
+                width: 20px;
+                height: 20px;
+                border-radius: 10px;
+                border: 1px solid;
+            }
+
+            .jogoPrincipal {
+                width: 100%;
+            }
         }
 
-        h1 {
-            color: aqua;
-        }
-
-        .icone {
-            width: 25px;
-            height: 25px;
-            border-radius: 20px;
-            border: 1px solid white;
-        }
-
-        .btnControleJogo-1 {
-            width: 100px;
-            height: 25px;
-            border-radius: 4px;
-        }
-
-        .img_1,
-        .img_2 {
-            border-radius: 12px;
+        .img {
             width: 70px;
             height: 70px;
-            margin: 10px;
-            box-shadow: 5px 5px 5px 0 aqua;
+            border-radius: 7px;
         }
 
-        .jogo_2 {
+        .placar1,
+        .placar2,
+        .placar3 {
+            width: 100%;
+            text-align: left;
+        }
+
+        .btnJogoPrincipal {
+            background-color: white;
+            border-radius: 5px;
+            width: 73px;
+            height: 30px;
+        }
+
+
+        /*Bonus*/
+        .btnBonus1 {
+            border: none;
+            background-color: black;
+        }
+
+        .imgBonus1 {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+        }
+
+        .jogoBonus1,
+        .placarBonus1 {
             display: none;
         }
 
-        .btnControle_2 {
-            background-color: transparent;
-            border: none;
+        .placarBonus1 {
+            margin-left: 170px;
+            width: 70px;
+        }
+
+        .acumuladoresBonus {
+            text-align: left;
+            padding: 3px;
+            color: yellow;
         }
     </style>
 </head>
 
 <body>
-    <div class="janela">
-        <div class="placar">
-            <table>
-                <tr>
-                    <th class="celula">
-                        <p>Créditos: <span id="dinheiro">0</span></p>
-                    </th>
-                    <th class="celula">
-                        <p>Premio: <span id="premio">0</span></p>
-                    </th>
-                    <th class="celula">
-                        <p>Aposta: <span id="apostas">1</span></p>
-                    </th>
-                </tr>
-            </table>
-            <br />
-            <table>
-                <tr>
-                    <th>
-                        <img class="icone" src="./img/tigre.png">
-                    </th>
-                    <th>
-                        <p><span id="premioPago">0</span></p>
-                    </th>
-                    <th class="celula">
+    <table class="placar1">
+        <tr>
+            <th>
+                <p>Créditos: <span id="dinheiro">0</span></p>
+            </th>
+            <th>
+                <p>Premio: <span id="premio">0</span></p>
+            </th>
+            <th>
+                <p>Aposta: <span id="apostas">1</span></p>
+            </th>
+        </tr>
+    </table>
 
-                    </th>
-                    <th>
-                        <img class="icone" src="./img/aguia.png">
-                    </th>
-                    <th>
-                        <p><span id="contador">1</span></p>
-                    </th>
-                </tr>
-            </table>
-        </div>
+    <table class="placar2" id="placar2">
+        <tr>
+            <th>
+                <img class="icone" src="./img2/tigre.png">
+                Premio pago: <span id="premioPago">0</span>
+            </th>
+            <th>
+                <img class="icone" src="./img2/aguia.png">
+                <span id="contador">1</span> X
+            </th>
+            <th>
+            </th>
+        </tr>
+    </table>
+    <table class="placarBonus1" id="placarBonus1">
+        <tr>
+            <th>
+                <h1>X <span id="bonus">0</span></h1>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                <h1>
+                    <span id="valorPremioBonus_1">0</span>
+                </h1>
+            </th>
+        </tr>
+    </table>
 
-        <div id="jogo_2" class="jogo_2">
-            <div class="premioBonus_1" id="premioBonus_1">
-                <table>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                        </th>
-                        <th>
-                            <h1>X <span id="bonus">0</span></h1>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                        </th>
-                        <th>
-                            <h1>
-                                <span id="valorPremioBonus_1">0</span>
-                            </h1>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
-                            <button class="btnControle_2" id="btnJogo_1" onclick="animacaoJogo_2('btnJogo_1')">
-                                <img class="img_2" src="./img/aguia.png">
-                            </button>
-                        </th>
-                        <th>
-                            <button class="btnControle_2" id="btnJogo_2" onclick="animacaoJogo_2('btnJogo_2')">
-                                <img class="img_2" src="./img/aguia.png">
-                            </button>
-                        </th>
-                        <th>
-                            <button class="btnControle_2" id="btnJogo_3" onclick="animacaoJogo_2('btnJogo_3')">
-                                <img class="img_2" src="./img/aguia.png">
-                            </button>
-                        </th>
-                        <th>
-                            <button class="btnControle_2" id="btnJogo_4" onclick="animacaoJogo_2('btnJogo_4')">
-                                <img class="img_2" src="./img/aguia.png">
-                            </button>
-                        </th>
-                        <th>
-                            <button class="btnControle_2" id="btnJogo_5" onclick="animacaoJogo_2('btnJogo_5')">
-                                <img class="img_2" src="./img/aguia.png">
-                            </button>
-                        </th>
+    <table class="jogoBonus1" id="jogoBonus1">
+        <tr>
+            <th>
+                <button class="btnBonus1" id="btn1Bonus1" onclick="animacaoJogoBonus1('btn1Bonus1')">
+                    <img class="imgBonus1" src="./img2/aguia.png">
+                </button>
+            </th>
+            <th>
+                <button class="btnBonus1" id="btn2Bonus1" onclick="animacaoJogoBonus1('btn2Bonus1')">
+                    <img class="imgBonus1" src="./img2/aguia.png">
+                </button>
+            </th>
+            <th>
+                <button class="btnBonus1" id="btn3Bonus1" onclick="animacaoJogoBonus1('btn3Bonus1')">
+                    <img class="imgBonus1" src="./img2/aguia.png">
+                </button>
+            </th>
+            <th>
+                <button class="btnBonus1" id="btn4Bonus1" onclick="animacaoJogoBonus1('btn4Bonus1')">
+                    <img class="imgBonus1" src="./img2/aguia.png">
+                </button>
+            </th>
+            <th>
+                <button class="btnBonus1" id="btn5Bonus1" onclick="animacaoJogoBonus1('btn5Bonus1')">
+                    <img class="imgBonus1" src="./img2/aguia.png">
+                </button>
+            </th>
+        </tr>
+    </table>
 
-                    </tr>
-                </table>
-            </div>
-        </div>
+    <table class="jogoPrincipal" id="jogoPrincipal">
+        <tr class="linha2">
+            <td>
+                <img class="img" id="img0" src="./img2/tigre.png">
+            </td>
+            <td>
+                <img class="img" id="img1" src="./img2/aguia.png">
+            </td>
+            <td>
+                <img class="img" id="img2" src="./img2/lebre.png">
+            </td>
+            <td>
+                <img class="img" id="img3" src="./img2/cao.png">
+            </td>
+            <td>
+                <img class="img" id="img4" src="./img2/gato.png">
+            </td>
+        </tr>
+        <tr class="linha1">
+            <td>
+                <img class="img" id="img5" src="./img2/zebra.png">
+            </td>
+            <td>
+                <img class="img" id="img6" src="./img2/zebra.png">
+            </td>
+            <td>
+                <img class="img" id="img7" src="./img2/cobra.png">
+            </td>
+            <td>
+                <img class="img" id="img8" src="./img2/cavalo.png">
+            </td>
+            <td>
+                <img class="img" id="img9" src="./img2/cao.png">
+            </td>
+        </tr>
+        <tr class="linha3">
+            <td>
+                <img class="img" id="img10" src="./img2/pavao.png">
+            </td>
+            <td>
+                <img class="img" id="img11" src="./img2/tigre.png">
+            </td>
+            <td>
+                <img class="img" id="img12" src="./img2/lebre.png">
+            </td>
+            <td>
+                <img class="img" id="img13" src="./img2/cao.png">
+            </td>
+            <td>
+                <img class="img" id="img14" src="./img2/gato.png">
+            </td>
+        </tr>
+    </table>
 
-        <div id="jogo_1" class="jogo_1">
-            <div class="grupos" id="grupos">
-                <div class="grupo1">
-                    <div class="linha">
-                        <img class="img_1" id="img_1" src="./img/tigre.png">
+    <table class="placar3" id="placar3">
+        <tr class="linha1Placar3">
+            <th class="acumuladoresBonus">
+                <span id="acumuladoBonus1">00,00</span>
+            </th>
+            <th class="acumuladoresBonus">
+                <span id="acumuladoBonus2">00,00</span>
+            </th>
+            <th class="acumuladoresBonus">
+                <span id="acumuladoBonus3">00,00</span>
+            </th>
+        </tr>
 
-                        <img class="img_1" id="img_2" src="./img/aguia.png">
+        <tr class="linha2Placar3">
+            <td>
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+            </td>
+            <td>
+                <img class="icone" src="./img2/aguia.png">
+                <img class="icone" src="./img2/aguia.png">
+                <img class="icone" src="./img2/aguia.png">
+                <img class="icone" src="./img2/aguia.png">
+                <img class="icone" src="./img2/aguia.png">
 
-                        <img class="img_1" id="img_3" src="./img/lebre.png">
-
-                        <img class="img_1" id="img_4" src="./img/cao.png">
-
-                        <img class="img_1" id="img_5" src="./img/gato.png">
-                    </div>
-                </div>
-
-                <div class="grupo2">
-                    <div class="linha">
-                        <img class="img_1" id="img_6" src="./img/zebra.png">
-
-                        <img class="img_1" id="img_7" src="./img/zebra.png">
-
-                        <img class="img_1" id="img_8" src="./img/cobra.png">
-
-                        <img class="img_1" id="img_9" src="./img/cavalo.png">
-
-                        <img class="img_1" id="img_10" src="./img/pavao.png">
-                    </div>
-                </div>
-
-                <div class="grupo3">
-                    <div class="linha">
-                        <img class="img_1" id="img_11" src="./img/tigre.png">
-
-                        <img class="img_1" id="img_12" src="./img/lebre.png">
-
-                        <img class="img_1" id="img_13" src="./img/cao.png">
-
-                        <img class="img_1" id="img_14" src="./img/gato.png">
-
-                        <img class="img_1" id="img_15" src="./img/zebra.png">
-                    </div>
-                </div>
-            </div>
-
-            <div class="bonus">
-                <table>
-                    <tr>
-                        <th class="celula">
-                            <span id="acumuladoBonusTigre1">00,00</span>
-                        </th>
-                        <th class="celula">
-                            <span id="acumuladoBonusAguia">00,00</span>
-                        </th>
-                        <th class="celula">
-                            <span id="acumuladoBonusTigre2">00,00</span>
-                        </th>
-                    </tr>
-
-                    <tr>
-                        <td class="celula">
-                            <div class="grupoTigres">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                            </div>
-                        </td>
-                        <td class="celula">
-                            <div class="grupoTigres">
-                                <img class="icone" src="./img/aguia.png">
-                                <img class="icone" src="./img/aguia.png">
-                                <img class="icone" src="./img/aguia.png">
-                                <img class="icone" src="./img/aguia.png">
-                                <img class="icone" src="./img/aguia.png">
-                            </div>
-                        </td>
-
-                        <td class="celula">
-                            <div class="grupoTigres">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                                <img class="icone" src="./img/tigre.png">
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <table>
-                    <tr>
-                        <td>
-                            <button class="btnControleJogo-1" id="btnAutomatico" value="true" onclick="jogar('true')">
-                                <span id="btnAutoText">AUTO OFF</span></button>
-                        </td>
-                        <td>
-                            <button class="btnControleJogo-1" id="btnJogar" value="false"
-                                onclick="jogar('false')">JOGAR</button>
-                        </td>
-                        <td>
-                            <button class="btnControleJogo-1" id="btnDepositar" onclick="depositar()">DEPOSITAR</button>
-                        </td>
-                        <td>
-                            <button class="btnControleJogo-1" id="btnAposta" onclick="almentarAposta()">APOSTA</button>
-                        </td>
-                        <td>
-                            <button class="btnControleJogo-1" id="btnLinhas" onclick="setLinhas()">LINHA <span
-                                    id="qtdeLinhas">1</span></button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+            </td>
+            <td>
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+                <img class="icone" src="./img2/tigre.png">
+            </td>
+        </tr>
+    </table>
     </div>
+
+    <table class="botoes" id="botoes">
+        <tr>
+            <td>
+                <button class="btnJogoPrincipal" id="btnAutomatico" value="true" onclick="jogar('true')">
+                    <span id="btnAutoText">AUTO OFF</span></button>
+            </td>
+            <td>
+                <button class="btnJogoPrincipal" id="btnJogar" value="false" onclick="jogar('false')">JOGAR</button>
+            </td>
+            <td>
+                <button class="btnJogoPrincipal" id="btnDepositar" onclick="depositar()">DEPOSITAR</button>
+            </td>
+            <td>
+                <button class="btnJogoPrincipal" id="btnAposta" onclick="almentarAposta()">APOSTA</button>
+            </td>
+            <td>
+                <button class="btnJogoPrincipal" id="btnLinhas" onclick="setLinhas()">LINHA <span
+                        id="qtdeLinhas">1</span></button>
+            </td>
+        </tr>
+    </table>
 </body>
 
 </html>
