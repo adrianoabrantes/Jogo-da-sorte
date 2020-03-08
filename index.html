@@ -8,6 +8,7 @@
     <title>Vegas Cassino village</title>
 
     <script>
+        //scripti
         dir = "./img2/";
 
         dinheiro = 0;
@@ -29,7 +30,18 @@
         var a;
         var t;
 
-        imagens = ['vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira', 'dente_sabre', 'tempestade', 'wolverine', 'cyclope', 'vampira', 'magneto', 'mistica', 'xavier'];
+        imagens = ['vampira', 'vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira', 'dente_sabre',
+            'vampira', 'dente_sabre', 'tempestade', 'vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira',
+            'dente_sabre', 'vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira', 'dente_sabre',
+            'tempestade', 'vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira', 'dente_sabre',
+            'tempestade', 'apocalipse', 'cyclope', 'vampira', 'magneto', 'mistica', 'vampira', 'juggernaut',
+            'cyclope', 'vampira', 'magneto', 'mistica', 'vampira', 'vampira', 'juggernaut', 'vampira',
+            'tempestade', 'wolverine', 'cyclope', 'vampira', 'apocalipse', 'mistica', 'vampira', 'colossos',
+            'vampira', 'dente_sabre', 'tempestade', 'wolverine', 'cyclope', 'vampira', 'magneto', 'mistica',
+            'tempestade', 'wolverine', 'cyclope', 'vampira', 'magneto', 'mistica', 'xavier',
+            'tempestade', 'apocalipse', 'cyclope', 'vampira', 'magneto', 'mistica', 'xavier', 'apocalipse',
+            'juggernaut', 'tempestade', 'colossos', 'vampira', 'juggernaut', 'tempestade', 'colossos',
+            'xavier', 'vampira', 'dente_sabre', 'vampira', 'juggernaut', 'tempestade', 'colossos', 'vampira', 'dente_sabre'];
 
         elemento = ['img0', 'img1', 'img2', 'img3', 'img4', 'img5', 'img6', 'img7',
             'img8', 'img9', 'img10', 'img11', 'img12', 'img13', 'img14'];
@@ -125,10 +137,10 @@
         }
 
         function randomImagens() {
-            positempestadeElemento = Math.floor(Math.random() * elemento.length);
-            positempestadeImagens = Math.floor(Math.random() * imagens.length);
-            img = document.getElementById(elemento[positempestadeElemento]);
-            img.src = dir + imagens[positempestadeImagens] + '.png';
+            posicaoElemento = Math.floor(Math.random() * elemento.length);
+            posicaoImagens = Math.floor(Math.random() * imagens.length);
+            img = document.getElementById(elemento[posicaoElemento]);
+            img.src = dir + imagens[posicaoImagens] + '.png';
         }
 
         function parar() {
@@ -1253,15 +1265,14 @@
             console.log(12 + " " + saida[12]);
             console.log(13 + " " + saida[13]);
             console.log(14 + " " + saida[14]);
-            lucro = gasto - premioPago;
-            document.getElementById('lucro').innerHTML = lucro;
 
+            lucro = gasto - premioPago;
+
+            document.getElementById('lucro').innerHTML = lucro;
             document.getElementById('premio').innerHTML = premio;
             document.getElementById('bonus').innerHTML = bonus;
             document.getElementById('premioPago').innerHTML = premioPago;
             document.getElementById('premioPagoResumo').innerHTML = premioPago;
-
-
         }
 
         function mostrarJogoBonus1(premio) {
@@ -1312,9 +1323,11 @@
             numero.innerHTML = valor;
             premioBonus = valor;
         }
+        //scriptf
     </script>
 
     <style>
+        /*folha*/
         .corpo {
             width: 400px;
             border-radius: 40px;
@@ -1322,6 +1335,15 @@
             background-color: black;
             color: lime;
             border: 4px solid lime;
+            padding: 5px;
+        }
+
+        .beta {
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            text-decoration: blink;
+
         }
 
         @media only screen and (min-width: 360px) {
@@ -1347,6 +1369,28 @@
 
         .placarPrincipal {
             width: 100%;
+        }
+
+        .dinheiro {
+            color: blue;
+            font-size: 30px;
+        }
+
+        .premio {
+            color: rgb(19, 216, 230);
+            font-size: 30px;
+        }
+
+        .apostas {
+            color: red;
+            font-size: 30px;
+        }
+
+        .acumuladoBonus1,
+        .acumuladoBonus2,
+        .acumuladoBonus3 {
+            color: red;
+            font-size: 30px;
         }
 
         .jogoPrincipal {
@@ -1405,6 +1449,7 @@
 </head>
 
 <body>
+    <!--htmli-->
     <div class="corpo">
         <div class="topo">
             <table>
@@ -1415,19 +1460,24 @@
                         </h1>
                     </th>
                 </tr>
+                <tr>
+                    <td>
+                        <p class="beta">Beta</p>
+                    </td>
+                </tr>
             </table>
 
             <div class="placarPrincipal">
                 <table>
                     <tr>
                         <th>
-                            <p>Créditos: <span id="dinheiro">0</span></p>
+                            <p>Créditos: <span id="dinheiro" class="dinheiro">0</span></p>
                         </th>
                         <th>
-                            <p>Premio: <span id="premio">0</span></p>
+                            <p>Premio: <span id="premio" class="premio">0</span></p>
                         </th>
                         <th>
-                            <p>Aposta: <span id="apostas">1</span></p>
+                            <p>Aposta: <span id="apostas" class="apostas">1</span></p>
                         </th>
                     </tr>
 
@@ -1554,13 +1604,13 @@
                 <table>
                     <tr>
                         <th class="acumuladoresBonus">
-                            <span id="acumuladoBonus1">00,00</span>
+                            <span id="acumuladoBonus1" class="acumuladoBonus1">00,00</span>
                         </th>
                         <th class="acumuladoresBonus">
-                            <span id="acumuladoBonus2">00,00</span>
+                            <span id="acumuladoBonus2" class="acumuladoBonus2">00,00</span>
                         </th>
                         <th class="acumuladoresBonus">
-                            <span id="acumuladoBonus3">00,00</span>
+                            <span id="acumuladoBonus3" class="acumuladoBonus3">00,00</span>
                         </th>
                     </tr>
 
@@ -1635,6 +1685,7 @@
             </div>
         </div>
     </div>
+    <!--htmlf-->
 </body>
 
 </html>
